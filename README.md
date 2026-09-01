@@ -195,7 +195,9 @@ Claude Code에서는 세 가지 방법 중 편한 쪽으로 사용합니다. Git
 /humanize [윤문할 텍스트 또는 파일 경로]
 ```
 
-옵션을 인자 끝에 자연어로 적을 수 있습니다: `장르: 칼럼`, `강도: 적극`, `최소심각도: S1`. 결과가 마음에 안 들면 `/humanize-redo "번역투만 다시"` 같은 식으로 재실행. 두 진입점은 이제 스킬입니다: [`humanize`](skills/humanize/SKILL.md) · [`humanize-redo`](skills/humanize-redo/SKILL.md)
+옵션을 인자 끝에 자연어로 적을 수 있습니다: `장르: 칼럼`, `강도: 적극`, `최소심각도: S1`. 결과가 마음에 안 들면 `/humanize-redo "번역투만 다시"` 같은 식으로 재실행. 진입점은 스킬입니다: [`humanize`](skills/humanize/SKILL.md) · [`humanize-quick`](skills/humanize-quick/SKILL.md) · [`humanize-redo`](skills/humanize-redo/SKILL.md)
+
+빠르게만 필요하면 `/humanize-quick` — 워크스페이스·진단·게이트 없이 이 대화 안에서 1패스로, [실측 판별력](skills/humanize-korean/references/empirical-validation.md)이 모델·과업을 바꿔도 살아남은 AI 티 6개(C-8 대구 12배 · E-1 장문 결핍 · C-11 연결어미 쉼표 · I-4 당위 · E-2 종결 편중 · F-5 추상 체인)만 걷어냅니다. 전수 탐지·변경률 게이트·증적이 필요하면 `/humanize`.
 
 **방법 C — Plugin / 마켓플레이스 (공식)**
 
