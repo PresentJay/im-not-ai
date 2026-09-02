@@ -16,7 +16,7 @@ _PRINCIPLES = os.path.join(_ROOT, "core", "principles.md")
 _KO_SKILL = os.path.join(_ROOT, "skills", "humanize-korean", "SKILL.md")
 
 # 증거 기준 3종. 언어팩을 새로 만드는 사람은 이 셋을 통과시켜야 한다.
-GATE_ANCHORS = ("### G1", "### G2", "### G3")
+GATE_ANCHORS = ("### G1", "### G2", "### G3", "### G4")
 
 # 각 게이트가 반드시 인용해야 하는 실측 앵커 — 근거 없는 규칙을 막는 것이
 # 이 문서의 존재 이유이므로, 문서 자신이 근거를 달지 않으면 자기모순이다.
@@ -24,6 +24,7 @@ GATE_EVIDENCE = {
     "### G1": ("H-1", "em dash"),
     "### G2": ("J-2",),
     "### G3": ("역주입",),
+    "### G4": ("과소윤문",),
 }
 
 

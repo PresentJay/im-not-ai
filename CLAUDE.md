@@ -51,10 +51,11 @@ im-not-ai/
 ├── commands/                      # Gemini CLI 커스텀 명령 (/humanize-korean, /humanize, /humanize-redo)
 ├── install.sh / uninstall.sh / update.sh   # Claude·Codex·Gemini 전역 설치/제거 (심링크 기본)
 ├── core/                          # 언어 무관 커널 (다국어 R1) — 프로덕션 런타임
-│   ├── principles.md              # 철칙 6 + 근거 등급 E1~E4 + 증거 기준 G1(전 모델 생존)·G2(과업 통제)·G3(역주입 금지)
+│   ├── principles.md              # 철칙 6 + 근거 등급 E1~E4 + 증거 기준 G1~G4
 │   ├── change_rate.py             # 변경률 — 문자 diff, metrics_v2에서 분리(재수출로 하위호환)
 │   ├── metrics_universal.py       # 분산·장문율·쉼표 계열 — 산술 지표(unit: chars|tokens)
 │   ├── reinjection.py             # G3 게이트 — 윤문 전후 재측정, 원시 건수로 판정
+│   ├── underedit.py               # G4 게이트 — 지목된 티가 실제로 줄었는지 (과소윤문)
 │   └── detect_language.py         # 유니코드 스크립트 비율 (ko|en|unknown, 판정 불가 시 ko)
 ├── lang/                          # 언어별 데이터·지표 (다국어 R2a) — 프로덕션 런타임
 │   └── en/
@@ -208,7 +209,7 @@ im-not-ai/
 
 ## 참고
 
-- **언어 무관 원리·증거 기준: `core/principles.md`** — 규칙을 신설·강등할 때의 판정 기준
+- **언어 무관 원리·증거 기준: `core/principles.md`** — 규칙을 신설·강등할 때의 판정 기준(G1~G3) + 윤문 결과 판정(G4)
 - 다국어 확장 설계: `docs/superpowers/specs/2026-09-02-multilingual-design.md` (근거: `docs/spikes/2026-09-02-en-transplant.md`)
 - 오케스트레이터: `skills/humanize-korean/SKILL.md`
 - 분류 체계: `skills/humanize-korean/references/ai-tell-taxonomy.md`

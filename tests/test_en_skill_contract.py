@@ -20,6 +20,7 @@ REFERENCED = (
     "scripts/prepare_monolith_input.py",
     "scripts/verify_change_rate.py",
     "core/reinjection.py",
+    "core/underedit.py",
     "core/principles.md",
     "lang/en/quick-rules.md",
     "lang/en/lexicon.json",
@@ -55,6 +56,10 @@ class EnSkillContractTests(unittest.TestCase):
 
     def test_reinjection_gate_called_with_lang_en(self) -> None:
         self.assertRegex(self.text, r"reinjection\.py[\s\S]{0,200}?--lang en")
+
+    def test_underedit_gate_called(self) -> None:
+        """과소윤문 게이트가 배선돼야 한다 — 실측에서 4회 중 1회가 새어나갔다."""
+        self.assertRegex(self.text, r"underedit\.py[\s\S]{0,300}?--route-hint")
 
     def test_heavy_and_finalize_are_closed(self) -> None:
         """영어에는 E1 근거가 없다 — heavy·finalize 를 열면 안 된다."""
