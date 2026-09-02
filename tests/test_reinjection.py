@@ -96,3 +96,69 @@ class ReinjectionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReinjectionCliTests(unittest.TestCase):
+    """CLI — 스킬이 Bash 로 부를 수 있어야 게이트가 실제로 돈다.
+
+    metrics_universal 이 R1 에서 '테스트만 부르는 라이브러리'였던 것과 같은
+    함정을 피한다. 게이트는 호출되지 않으면 없는 것과 같다.
+    """
+
+    import subprocess as _sp
+    import sys as _sys
+
+    def _run(self, before: str, after: str, lang: str = "en"):
+        import subprocess
+        import sys
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            b = os.path.join(td, "b.txt")
+            a = os.path.join(td, "a.txt")
+            with open(b, "w", encoding="utf-8") as f:
+                f.write(before)
+            with open(a, "w", encoding="utf-8") as f:
+                f.write(after)
+            return subprocess.run(
+                [sys.executable, _MOD, "--before", b, "--after", a, "--lang", lang],
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+
+    def test_clean_rewrite_exits_zero(self) -> None:
+        r = self._run(
+            "It must be done—now. We should go—soon.", "Do it now. Go soon."
+        )
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("역주입 없음", r.stdout)
+
+    def test_reinjection_exits_one(self) -> None:
+        r = self._run(
+            "One thing. Two thing—here.",
+            "One thing—joined. Two—here. Three—more.",
+        )
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("em_dash", r.stdout)
+
+    def test_korean_lang_uses_korean_counters(self) -> None:
+        r = self._run(
+            "성장은 둔화됐다. 투자도 줄었다.",
+            "결국 성장은 둔화됐다. 결국 투자도 줄었다.",
+            lang="ko",
+        )
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("결국", r.stdout)
+
+    def test_missing_file_exits_three(self) -> None:
+        import subprocess
+        import sys
+
+        r = subprocess.run(
+            [sys.executable, _MOD, "--before", "/nope/a", "--after", "/nope/b"],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
