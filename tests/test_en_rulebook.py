@@ -1,0 +1,80 @@
+"""lang/en/quick-rules.md 계약 — 영어 룰북.
+
+설계 §2.6: Tier A(외부 근거 + ko 실측 양쪽) + Tier B(구조·서식).
+**제외 대상이 실제로 빠져 있는지**가 핵심 — em dash 는 G1 미통과이고,
+H-1·H-3·G-3·D-4 는 한국어에서도 근거가 흔들린다.
+"""
+from __future__ import annotations
+
+import os
+import re
+import unittest
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_ROOT = os.path.abspath(os.path.join(_HERE, ".."))
+_RULEBOOK = os.path.join(_ROOT, "lang", "en", "quick-rules.md")
+
+TIER_A = ("C-8", "F-7", "E-1", "F-4", "G-1", "G-2", "A-9")
+TIER_B = ("C-1", "C-2", "C-3", "C-5", "C-6", "C-9", "C-10")
+EXCLUDED = ("J-3", "H-1", "H-3", "G-3", "D-4")
+
+_RULE_ROW = re.compile(r"^\|\s*\*\*([A-J]-\d+)\*\*")
+
+
+def _read() -> str:
+    with open(_RULEBOOK, encoding="utf-8") as f:
+        return f.read()
+
+
+class EnRulebookTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.assertTrue(os.path.isfile(_RULEBOOK), f"없다: {_RULEBOOK}")
+        self.text = _read()
+        self.rows = [ln for ln in self.text.splitlines() if _RULE_ROW.match(ln)]
+        self.ids = {_RULE_ROW.match(ln).group(1) for ln in self.rows}
+
+    def test_tier_a_present(self) -> None:
+        for rid in TIER_A:
+            self.assertIn(rid, self.ids, f"Tier A 규칙 누락: {rid}")
+
+    def test_tier_b_present(self) -> None:
+        for rid in TIER_B:
+            self.assertIn(rid, self.ids, f"Tier B 규칙 누락: {rid}")
+
+    def test_excluded_rules_absent(self) -> None:
+        """G1 미통과·근거 흔들림 항목은 규칙 표에 있으면 안 된다."""
+        for rid in EXCLUDED:
+            self.assertNotIn(
+                rid, self.ids, f"{rid} 는 규칙에서 제외돼야 한다(근거 미달)"
+            )
+
+    def test_every_rule_has_evidence_grade(self) -> None:
+        self.assertGreaterEqual(len(self.rows), 12)
+        for row in self.rows:
+            self.assertRegex(row, r"E[1-4]\b", f"근거 등급 없음: {row[:70]}")
+
+    def test_states_no_e1_evidence(self) -> None:
+        """영어에 E1 이 없다는 사실과 그 귀결(heavy·finalize 미개방)이 적혀야 한다."""
+        self.assertIn("E1", self.text)
+        self.assertRegex(self.text, r"finalize")
+        self.assertRegex(self.text, r"heavy")
+
+    def test_em_dash_documented_as_observation_only(self) -> None:
+        """em dash 는 규칙이 아니라 관측 지표임이 본문에 남아야 한다."""
+        self.assertIn("em dash", self.text)
+        self.assertIn("관측", self.text)
+
+    def test_c8_lists_multiple_syntactic_frames(self) -> None:
+        """C-8 은 프레임 하나만 적으면 첫 정규식처럼 재현율이 무너진다(0/6)."""
+        c8_rows = [r for r in self.rows if _RULE_ROW.match(r).group(1) == "C-8"]
+        body = " ".join(c8_rows)
+        for frame in ("not", "but", "neither", "rather than"):
+            self.assertIn(frame, body.lower(), f"C-8 프레임 누락: {frame}")
+
+    def test_no_new_tells_rule_present(self) -> None:
+        """철칙 #6 — 영어 윤문이 em dash 를 심었던 실사고의 재발 방지."""
+        self.assertRegex(self.text, r"No New Tells|철칙 #6")
+
+
+if __name__ == "__main__":
+    unittest.main()
