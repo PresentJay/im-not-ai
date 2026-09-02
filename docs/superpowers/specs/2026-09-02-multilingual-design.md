@@ -11,12 +11,17 @@
 스파이크의 최대 한계는 "인간 영어 코퍼스가 없어 *AI만의 특징인가*에 답 못 함"이었다.
 영어는 한국어와 달리 **대규모 human-vs-AI 계량 연구가 이미 여럿 발표돼 있다.**
 
-| 출처 | 규모 | 우리에게 주는 것 |
-|---|---|---|
-| **Kobak et al. 2025** (Science Advances) | PubMed 초록 **15M편, 2010–2024** | 초과 어휘 291개 + **excess vocabulary 법** |
-| **Reinhart et al. 2025** (PNAS) | Biber 67자질, human(COCA) vs GPT-4o·Llama 3 병렬 | **문법·수사 층 방향** = 우리 T2 층과 동일 층위 |
-| **SlopDetector 2026** | 인간 산문 **702,939 words** vs 6모델 | em dash 실측 (모델별 분해 포함) |
-| **Rudnicka & Juzek 2026** | 2024·2026 코호트 각 6모델 | 모델 개인어 반증 |
+| 출처 | 등급 | 규모 | 우리에게 주는 것 |
+|---|---|---|---|
+| **Kobak et al. 2025** (Science Advances) | **E2** (본문 표 미확인 — 페치 요약) | PubMed 초록 **15M편, 2010–2024** | 초과 어휘 291개 + **excess vocabulary 법** |
+| **Reinhart et al. 2025** (PNAS) | **E2** (본문 표 미확인 — 페치 요약, 방향만) | Biber 67자질, human(COCA) vs GPT-4o·Llama 3 병렬 | **문법·수사 층 방향** = 우리 T2 층과 동일 층위 |
+| **SlopDetector 2026** | **E3** (비심사 블로그, 인간 풀이 문학 고전) | 인간 산문 **702,939 words** vs 6모델 | em dash 실측 (모델별 분해 포함) |
+| **Rudnicka & Juzek 2026** | **E3** (프리프린트) | 2024·2026 코호트 각 6모델 | 모델 개인어 반증 |
+
+등급 정의는 `core/principles.md` 「근거 등급 (E1~E4)」. **E3 이하는 단독으로 규칙을
+세우지 못한다** — 방향 가설로만 쓰고, 규칙 승격은 E1 또는 표 확인된 E2 를 요구한다.
+현재 영어 baseline 후보는 **E1 이 하나도 없다.** 이것이 영어팩이 light/standard 만
+열고 heavy·finalize 를 닫는 이유다.
 
 **결론: `lang/en/baseline.json`을 발표 수치로 채운다.** 언어당 수 주였던 캘리브레이션 비용이
 인용 작업으로 줄어든다. ko의 `_source_anchor` 관습을 그대로 쓴다.

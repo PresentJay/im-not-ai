@@ -7,6 +7,7 @@ stdlib only, claude CLI 불필요 — CI 에서 항상 실행된다.
 from __future__ import annotations
 
 import os
+import re
 import unittest
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -88,6 +89,38 @@ class PrinciplesContractTests(unittest.TestCase):
                     body,
                     f"{anchor} 절이 근거 '{needle}' 를 인용하지 않는다",
                 )
+
+    def test_evidence_grade_scale_defined(self) -> None:
+        """근거 등급 체계가 문서에 정의돼 있어야 한다."""
+        self.assertIn("## 근거 등급", self.text)
+        for grade in ("**E1**", "**E2**", "**E3**", "**E4**"):
+            self.assertIn(grade, self.text, f"등급 {grade} 정의 누락")
+
+    def test_every_evidence_anchor_is_graded(self) -> None:
+        """'근거 (…):' 줄마다 등급 태그가 붙어야 한다.
+
+        증거 기준을 정의하는 문서가 자기 증거의 등급을 숨기면 자기모순이고,
+        읽는 사람이 자체 실측(E1)과 블로그 측정(E3)을 동급으로 받아들인다.
+        """
+        anchors = [
+            line
+            for line in self.text.splitlines()
+            if line.startswith("근거 (") or line.startswith("이론적 뒷받침")
+        ]
+        self.assertGreaterEqual(
+            len(anchors), 6, f"근거 줄을 {len(anchors)}개만 찾았다 — 파싱 확인 필요"
+        )
+        grade_re = re.compile(r"\*\*\[E[1-4]\b")
+        for line in anchors:
+            self.assertRegex(
+                line,
+                grade_re,
+                f"근거 등급 태그(**[E1]** 등)가 없다: {line[:70]}",
+            )
+
+    def test_e3_cannot_stand_alone_is_stated(self) -> None:
+        """E3 단독으로 규칙을 세우지 못한다는 제약이 명문화돼야 한다."""
+        self.assertIn("E3 이하는 단독으로 규칙을 세우지 못한다", self.text)
 
     def test_ko_skill_links_principles(self) -> None:
         """ko 스킬이 커널 문서를 가리켜야 한 방향 참조가 성립한다."""
