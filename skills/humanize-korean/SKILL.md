@@ -321,6 +321,7 @@ exit code로 분기한다 (0/1/2/3 의미는 기존 게이트와 동일):
 
 ## 참고 자료
 
+- 언어 무관 원리·증거 기준: [`${SKILL_ROOT}/core/principles.md`](../../core/principles.md) — 철칙 6개 + 증거 기준 G1(전 모델 생존)·G2(과업 통제)·G3(역주입 금지). 규칙을 신설·강등할 때의 판정 기준
 - 슬림 룰북 (monolith 전용): [`${CLAUDE_SKILL_DIR}/references/quick-rules.md`](references/quick-rules.md) — S1·S2 핵심 패턴 + 자체검증 체크리스트
 - 진단 인덱스 (diagnostician 전용): [`${CLAUDE_SKILL_DIR}/references/diagnosis-rules.md`](references/diagnosis-rules.md) — 71패턴 전수 ID·정의·시그니처. `build_diagnosis_rules.py`가 taxonomy에서 자동 생성(직접 편집 금지)
 - 정량 점수 shim: `${SKILL_ROOT}/scripts/prepare_monolith_input.py` — `${CLAUDE_SKILL_DIR}/references/metrics_v2.py`(실패 시 `metrics.py` fallback) + `${CLAUDE_SKILL_DIR}/references/baseline.json` 기반 사전 점수 + `route_hint` 산출
