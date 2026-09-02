@@ -50,6 +50,10 @@ im-not-ai/
 ├── GEMINI.md                      # Gemini 에이전트 컨텍스트 (monolith 룰 인라인)
 ├── commands/                      # Gemini CLI 커스텀 명령 (/humanize-korean, /humanize, /humanize-redo)
 ├── install.sh / uninstall.sh / update.sh   # Claude·Codex·Gemini 전역 설치/제거 (심링크 기본)
+├── core/                          # 언어 무관 커널 (다국어 R1) — 프로덕션 런타임
+│   ├── principles.md              # 철칙 6 + 증거 기준 G1(전 모델 생존)·G2(과업 통제)·G3(역주입 금지)
+│   ├── change_rate.py             # 변경률 — 문자 diff, metrics_v2에서 분리(재수출로 하위호환)
+│   └── metrics_universal.py       # 분산·장문율·쉼표 계열 — 산술 지표(unit: chars|tokens)
 ├── scripts/
 │   ├── prepare_monolith_input.py  # input shim — 텍스트 위생 + 정량 점수 + route_hint 산출 + 결합 입력 (`--diagnosis`·`--chunk`·`--no-sanitize`)
 │   ├── sanitize_text.py           # 텍스트 위생 — 제로폭·bidi·특수공백 제거 + 한글 NFD→NFC (결정적, LLM 0콜)
@@ -192,11 +196,13 @@ im-not-ai/
 ## 확장 포인트
 
 - **웹 서비스화**: 별도 코드베이스로 라이브 (imnotai.kr). 본 리포의 `web-service-spec.md`는 설계 산출물로만 보존 (설계 에이전트 `humanize-web-architect`는 v2.1에서 은퇴).
-- **다국어 확장**: 일본어·중국어로 확장 시 언어별 taxonomy 분리 파일 추가.
+- **다국어 확장**: 설계 완료 — `docs/superpowers/specs/2026-09-02-multilingual-design.md`. 커널은 코드가 아니라 **증거 기준**(`core/principles.md` G1·G2·G3)이다. 실측 결과 81패턴 중 48개(59%)가 담화·구조 층이라 무료 이식되나 **탐지기는 이식되지 않는다**(영어 C-8 정규식 첫 재현율 0/6). 첫 확장 언어는 영어, baseline 은 발표 수치 인용(코퍼스 신규 구축 없음).
 - **장르 확장**: 현재 4장르(칼럼·리포트·블로그·공적). 학술 논문·법률 문서·제품 카피 추가 가능.
 
 ## 참고
 
+- **언어 무관 원리·증거 기준: `core/principles.md`** — 규칙을 신설·강등할 때의 판정 기준
+- 다국어 확장 설계: `docs/superpowers/specs/2026-09-02-multilingual-design.md` (근거: `docs/spikes/2026-09-02-en-transplant.md`)
 - 오케스트레이터: `skills/humanize-korean/SKILL.md`
 - 분류 체계: `skills/humanize-korean/references/ai-tell-taxonomy.md`
 - 윤문 처방: `skills/humanize-korean/references/rewriting-playbook.md`
