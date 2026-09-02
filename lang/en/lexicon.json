@@ -1,0 +1,2456 @@
+{
+ "version": "0.1",
+ "source": "Kobak, Márquez, Horvát, Lause (2025), 'Delving into LLM-assisted writing in biomedical publications through excess vocabulary', Science Advances. 데이터: github.com/berenslab/llm-excess-vocab results/excess_words.csv",
+ "source_sha256_16": "f5786f3cc83f9578",
+ "evidence": "E2 — 동료심사 발표 + 공개 원자료 직접 확인. 논문의 핵심 주장('2024 초과 어휘의 66%가 동사')을 원자료로 재계산해 65.8%로 검증했다. core/principles.md 「근거 등급」 참조.",
+ "caveat": "코퍼스가 PubMed 생의학 초록(15M편, 2010-2024)이다. 논설·에세이 장르의 임계가 아니라 방향 근거로만 쓴다. content word 462건은 주제 부산물이므로 제외하고 style word 만 담았다.",
+ "notes": "표제어는 원자료의 표면형 그대로다. 원형화하지 않는다 — Kobak 이 형태별로 초과를 측정했고 목록이 delve/delves/delving 을 각각 담고 있다. 원형화 후 접미사 재확장은 측정되지 않은 형태를 만들어낸다.",
+ "family_derivation": "part_of_speech 에서 기계적 유도: verb→F-7, adjective→D-4, adverb→F-1, 그 외→unclassified. 손 분류 없음.",
+ "entries": [
+  {
+   "word": "accentuates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "achieving",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "acknowledges",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "acknowledging",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "across",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "additionally",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "address",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "addresses",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "addressing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "adept",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "adhered",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "adhering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "advancement",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "advancements",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "advancing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "advocates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "advocating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "affirming",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "afflicted",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "aiding",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "aims",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "akin",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "align",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "aligning",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "aligns",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "alongside",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "amid",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "amidst",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "analysis",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "announced",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "apologizes",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "approach",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "assess",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "assessed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "assessing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "assessments",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "attains",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "attributed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "augmenting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "avenue",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "avenues",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "based",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "between",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "bolster",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "bolstered",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "bolstering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "both",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "pronoun/adverb"
+  },
+  {
+   "word": "broader",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "burgeoning",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "capabilities",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "capitalizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "categorized",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "categorizes",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "categorizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "challenge",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "challenges",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "combating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "commendable",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "compelling",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "complex",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "complicates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "complicating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "comprehend",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "comprehending",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "comprehensive",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "comprising",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "conditions",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "conducted",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "consequently",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "consolidates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "contributing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb",
+   "comment": "contributing factors"
+  },
+  {
+   "word": "conversely",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "correlating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "crafted",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "crafting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "crucial",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "culminating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "customizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "declare",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "declared",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "deductively",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "delineates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "delve",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "delved",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "delves",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "delving",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "demonstrated",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "demonstrates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "demonstrating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "dependability",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "dependable",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "despite",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "detailing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "detrimentally",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "diminishes",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "diminishing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "discern",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "discerned",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "discernible",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "discerning",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "displaying",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "disrupts",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "distinct",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "distinctions",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "distinctive",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "diverse",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "during",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "easing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "effectively",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "elevate",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "elevated",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "elevates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "elevating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "elucidate",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "elucidates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "elucidating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "embracing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emerged",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emerges",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emphasises",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emphasising",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emphasize",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emphasizes",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emphasizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "employed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "employing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "employs",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "empowers",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emulating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "emulation",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "enabling",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "encapsulates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "encompass",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "encompassed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "encompasses",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "encompassing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "endangering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "endeavors",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun",
+   "comment": "\"research endeavors\""
+  },
+  {
+   "word": "endeavours",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun",
+   "comment": "BE version"
+  },
+  {
+   "word": "enduring",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "enhance",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "enhanced",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "enhancements",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "nount"
+  },
+  {
+   "word": "enhances",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "enhancing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "ensuring",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "equipping",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "escalating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "essentials",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "evaluates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "evolving",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exacerbating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "examines",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exceeding",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "excels",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exceptional",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "exceptionally",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "exerting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exhibit",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exhibited",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exhibiting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exhibits",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "expedite",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "expediting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "exploration",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "explores",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "facilitated",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "facilitates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "facilitating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "featuring",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "fight",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun/verb"
+  },
+  {
+   "word": "findings",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "focusing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "formidable",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "fostering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "fosters",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "foundational",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "furnish",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "garnered",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "garnering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "gauged",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "grappling",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "groundbreaking",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "groundwork",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "hardest",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "harness",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "harnesses",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "harnessing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "heighten",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "heightened",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "highlight",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "highlighting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "highlights",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "hinder",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "hinges",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "hinting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "hold",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "holds",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "however",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "identified",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "illuminates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "illuminating",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "imbalances",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "impact",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "impactful",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "impacting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "impede",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "impeding",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "imperative",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "impressive",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "inadequately",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "including",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "incorporates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "incorporating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "indicating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "individuals",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "influencing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "inherent",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "initially",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "innovative",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "inquiries",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "insights",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "integrates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "integrating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "integration",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "interconnectedness",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "interplay",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "into",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "intricacies",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "intricate",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "intricately",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "introduces",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "invaluable",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "investigates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "involves",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "involving",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "juxtaposed",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "leading",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "leverages",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "leveraging",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "like",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "particle"
+  },
+  {
+   "word": "limitations",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "linked",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "maintaining",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "merges",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "methodologies",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "meticulous",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "meticulously",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "midst",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "multifaceted",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "necessitate",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "necessitates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "necessitating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "necessity",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "need",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "notable",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "notably",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "advebr"
+  },
+  {
+   "word": "noteworthy",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "nuanced",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "nuances",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "observed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "offer",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "offering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "offers",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "optimizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "orchestrating",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "outcomes",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "outlines",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "overlook",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "overlooking",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "overwhelmed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "particularly",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "paving",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "persist",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pinpoint",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pinpointed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pinpointing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pioneering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pioneers",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "pivotal",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "poised",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pose",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "posed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "poses",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "posing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "postponed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "potential",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "potentially",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "precise",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "predominantly",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "presents",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "preserving",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pressing",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "prevalent",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "primarily",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "primary",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "promise",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "promising",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "pronounced",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "propelling",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "providing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "realizes",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "realm",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "realms",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "recognizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "refine",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "refines",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "refining",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "reframing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "remains",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "remarkable",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "renowned",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "research",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "resulting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "rethink",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "revealed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "revealing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "reveals",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "revolutionize",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "revolutionizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "revolves",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "role",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "scrutinize",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "scrutinized",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "scrutinizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "seamless",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "seamlessly",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "seeks",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "serves",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "serving",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "shaping",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "shedding",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "showcased",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "showcases",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "showcasing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "signifying",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "solidify",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "spanned",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "spanning",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "specifically",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "spurred",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "stands",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "statement",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "stemming",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "strategically",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "strategies",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "streamline",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "streamlined",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "streamlines",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "streamlining",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "struggle",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "subsequently",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "substantial",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "substantiated",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "substantiates",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "surged",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "surmount",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "surpass",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "surpassed",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "surpasses",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "surpassing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "swift",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "swiftly",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "techniques",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "their",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "pronoun"
+  },
+  {
+   "word": "thereby",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "these",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "pronoun"
+  },
+  {
+   "word": "this",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "pronoun"
+  },
+  {
+   "word": "thorough",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "through",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "transformative",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "typically",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "ultimately",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "uncharted",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "uncovering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "underexplored",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "underscore",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "underscored",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "underscores",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "underscoring",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "understanding",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "unexplored",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "unlocking",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "unparalleled",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "unraveling",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "unveil",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "unveiled",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "unveiling",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "unveils",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "uphold",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "upholding",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "urging",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "using",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "utilized",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "utilizes",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "utilizing",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "valuable",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "various",
+   "type": "style",
+   "family": "D-4",
+   "pos": "adjective"
+  },
+  {
+   "word": "varying",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "verifies",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "versatility",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "noun"
+  },
+  {
+   "word": "wandering",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "warranting",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "were",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  },
+  {
+   "word": "while",
+   "type": "style",
+   "family": "unclassified",
+   "pos": "preposition"
+  },
+  {
+   "word": "within",
+   "type": "style",
+   "family": "F-1",
+   "pos": "adverb"
+  },
+  {
+   "word": "yielding",
+   "type": "style",
+   "family": "F-7",
+   "pos": "verb"
+  }
+ ]
+}
