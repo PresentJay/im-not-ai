@@ -74,6 +74,13 @@ class RuntimeBoundaryTests(unittest.TestCase):
             for f in refs_src.iterdir():
                 if f.is_file():
                     (refs_dst / f.name).write_bytes(f.read_bytes())
+            # core/ 는 프로덕션 런타임이다(다국어 R1, 2026-09-02) — change_rate 가
+            # 여기 산다. 선별 배포는 scripts/·references/ 와 함께 core/ 를 반드시
+            # 포함해야 한다. 이 복사 목록이 곧 "배포에 무엇이 들어가는가"의 명세다.
+            core_dst = d / "core"
+            core_dst.mkdir()
+            for f in (_ROOT / "core").glob("*.py"):
+                (core_dst / f.name).write_bytes(f.read_bytes())
 
             self.assertFalse((d / "tests").exists(), "tests/ 가 없어야 하는 조건")
 
