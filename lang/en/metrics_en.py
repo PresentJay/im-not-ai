@@ -42,6 +42,13 @@ HEAVY_MIN_LEXICON_PER_1K = 4.0
 # 보수적으로 8.0 을 "균일하다"의 경계로 두고 중간대는 standard 로 흘린다.
 UNIFORM_DISPERSION_MAX = 8.0
 
+# 밀도 지표를 쓰기 위한 최소 분량. 39토큰 글에서 렉시콘 1건이면 25.6/1k 가
+# 나와 heavy 로 튄다 — 비율이 아니라 분모가 만든 수다.
+# `core/principles.md` G3 의 "밀도 지표를 볼 때는 분모를 함께 본다"가
+# 라우터 자신에게도 적용된다. 이 아래에서는 어휘·분산 판정을 하지 않고
+# standard(안전한 기본값)로 보낸다.
+MIN_TOKENS_FOR_RATE = 200
+
 _WORD_BOUNDARY_CACHE: dict[int, re.Pattern] = {}
 
 
@@ -107,6 +114,12 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
     if chars > ROUTE_HEAVY_MIN_CHARS:
         hint = "heavy"
         reason = f"{chars:,} chars (>{ROUTE_HEAVY_MIN_CHARS:,}) — 초장문"
+    elif tokens < MIN_TOKENS_FOR_RATE:
+        hint = "standard"
+        reason = (
+            f"{tokens} tokens (<{MIN_TOKENS_FOR_RATE}) — 밀도 판정 불가, "
+            f"기본 경로 (렉시콘 {total}건 · 분산 {dispersion})"
+        )
     elif per_1k >= HEAVY_MIN_LEXICON_PER_1K and dispersion <= UNIFORM_DISPERSION_MAX:
         hint = "heavy"
         reason = f"렉시콘 {per_1k}/1k + 분산 {dispersion} — 어휘 티 밀집 + 리듬 균일"

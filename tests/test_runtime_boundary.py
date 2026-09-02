@@ -81,6 +81,13 @@ class RuntimeBoundaryTests(unittest.TestCase):
             core_dst.mkdir()
             for f in (_ROOT / "core").glob("*.py"):
                 (core_dst / f.name).write_bytes(f.read_bytes())
+            # lang/ 도 프로덕션 런타임이다(R2a) — shim 이 영어 입력에서 읽는다.
+            for sub in sorted(p.name for p in (_ROOT / "lang").iterdir() if p.is_dir()):
+                lang_dst = d / "lang" / sub
+                lang_dst.mkdir(parents=True)
+                for f in (_ROOT / "lang" / sub).iterdir():
+                    if f.is_file():
+                        (lang_dst / f.name).write_bytes(f.read_bytes())
 
             self.assertFalse((d / "tests").exists(), "tests/ 가 없어야 하는 조건")
 

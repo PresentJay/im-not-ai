@@ -148,3 +148,32 @@ class RouterLexiconScopeTests(unittest.TestCase):
         self.assertAlmostEqual(by["delves"]["ratio"], 28.0)
         self.assertAlmostEqual(by["underscores"]["ratio"], 13.8)
         self.assertAlmostEqual(by["showcasing"]["ratio"], 10.7)
+
+
+class DenominatorGuardTests(unittest.TestCase):
+    """짧은 글에서 밀도 지표를 믿지 않는다.
+
+    실사고(2026-09-02): 39토큰 영어 표본이 렉시콘 4건으로 102.56/1k 를 내
+    heavy 판정을 받았다. 비율이 아니라 분모가 만든 수다.
+    core/principles.md G3 의 "밀도 지표를 볼 때는 분모를 함께 본다" 가
+    라우터 자신에게도 적용된다.
+    """
+
+    def setUp(self) -> None:
+        self.m = _load()
+
+    def test_short_slop_is_not_heavy(self) -> None:
+        out = self.m.compute_all_en(SLOP)  # 40토큰 안팎
+        self.assertLess(out["universal"]["tokens"], self.m.MIN_TOKENS_FOR_RATE)
+        self.assertEqual(out["route_hint"], "standard", out["route_reason"])
+        self.assertIn("밀도 판정 불가", out["route_reason"])
+
+    def test_long_slop_still_goes_heavy(self) -> None:
+        """분량이 충분하면 어휘 밀집은 여전히 heavy 다."""
+        out = self.m.compute_all_en(SLOP * 12)
+        self.assertGreaterEqual(out["universal"]["tokens"], self.m.MIN_TOKENS_FOR_RATE)
+        self.assertEqual(out["route_hint"], "heavy", out["route_reason"])
+
+    def test_long_human_prose_is_not_heavy(self) -> None:
+        out = self.m.compute_all_en(HUMAN * 8)
+        self.assertNotEqual(out["route_hint"], "heavy", out["route_reason"])

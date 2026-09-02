@@ -289,6 +289,25 @@ def compute_route_hint(metrics_obj: dict) -> dict:
     }
 
 
+def resolve_lang(requested: str, text: str) -> str:
+    """``--lang`` 값을 실제 경로로 푼다.
+
+    ``auto`` 는 유니코드 스크립트 비율로 감지하고, 판정 불가(``unknown``)면
+    **한국어로 떨어뜨린다** — 이 저장소의 현행 동작이 한국어이므로 회귀가 없다.
+    감지 모듈 import 가 실패해도 같은 이유로 ko 로 떨어진다.
+    """
+    if requested != "auto":
+        return requested
+    try:
+        sys.path.insert(0, str(PROJECT_ROOT / "core"))
+        from detect_language import detect_language  # noqa: PLC0415
+
+        detected = detect_language(text)
+    except Exception:  # noqa: BLE001 — 감지 실패가 파이프라인을 막지 않는다.
+        return "ko"
+    return detected if detected in ("ko", "en") else "ko"
+
+
 # ---------------------------------------------------------------------------
 # Combined-file rendering
 # ---------------------------------------------------------------------------
@@ -858,6 +877,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--text", help="Inline text input (creates new run dir)")
     p.add_argument("--genre", default="essay", help="Genre hint (default: essay)")
     p.add_argument(
+        "--lang",
+        choices=("auto", "ko", "en"),
+        default="auto",
+        help="입력 언어. auto 는 유니코드 스크립트 비율로 감지(기본, 판정 "
+             "불가 시 ko). ko 는 현행 한국어 경로와 완전히 동일하게 동작한다.",
+    )
+    p.add_argument(
         "--baseline",
         default=None,
         help="Override baseline JSON path (default: project default)",
@@ -910,7 +936,34 @@ def main(argv: list[str] | None = None) -> int:
     metrics_path = run_dir / "00_metrics.json"
     error_path = run_dir / "00_metrics.error"
 
-    if _metrics_mod is None:
+    lang = resolve_lang(args.lang, text)
+
+    if lang == "en":
+        # 영어는 별도 경로다 — 한국어 metrics 는 형태소·조사 정규식과
+        # 한국어 baseline 에 묶여 있어 영어에서 의미 없는 수를 낸다.
+        # 탐지 대신 계측형(분산·쉼표) + 명시 호명 렉시콘으로 route_hint 를 낸다.
+        try:
+            sys.path.insert(0, str(PROJECT_ROOT / "lang" / "en"))
+            from metrics_en import compute_all_en  # noqa: PLC0415
+
+            metrics_obj = compute_all_en(text)
+            metrics_path.write_text(
+                json.dumps(metrics_obj, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            if error_path.exists():
+                try:
+                    error_path.unlink()
+                except OSError:
+                    pass
+        except Exception as exc:  # noqa: BLE001 — graceful degrade is the point.
+            metrics_obj = None
+            error_path.write_text(
+                f"metrics_en_failed: {type(exc).__name__}: {exc}\n\n"
+                + traceback.format_exc(),
+                encoding="utf-8",
+            )
+    elif _metrics_mod is None:
         error_path.write_text(
             "metrics module import failed; combined file emitted without score block",
             encoding="utf-8",
@@ -924,6 +977,7 @@ def main(argv: list[str] | None = None) -> int:
             metrics_obj["_text"] = text
             metrics_obj.update(compute_route_hint(metrics_obj))
             metrics_obj.pop("_text", None)
+            metrics_obj["lang"] = "ko"
             metrics_path.write_text(
                 json.dumps(metrics_obj, ensure_ascii=False, indent=2),
                 encoding="utf-8",
@@ -953,6 +1007,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"run_dir={run_dir}\n"
         f"combined={combined_path}\n"
+        f"lang={lang}\n"
         f"risk_band={rb}  risk_score={rs}\n"
         f"route_hint={rh}\n"
         f"degraded={metrics_obj is None}"
