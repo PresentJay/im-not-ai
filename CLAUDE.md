@@ -51,9 +51,16 @@ im-not-ai/
 ├── commands/                      # Gemini CLI 커스텀 명령 (/humanize-korean, /humanize, /humanize-redo)
 ├── install.sh / uninstall.sh / update.sh   # Claude·Codex·Gemini 전역 설치/제거 (심링크 기본)
 ├── core/                          # 언어 무관 커널 (다국어 R1) — 프로덕션 런타임
-│   ├── principles.md              # 철칙 6 + 증거 기준 G1(전 모델 생존)·G2(과업 통제)·G3(역주입 금지)
+│   ├── principles.md              # 철칙 6 + 근거 등급 E1~E4 + 증거 기준 G1(전 모델 생존)·G2(과업 통제)·G3(역주입 금지)
 │   ├── change_rate.py             # 변경률 — 문자 diff, metrics_v2에서 분리(재수출로 하위호환)
-│   └── metrics_universal.py       # 분산·장문율·쉼표 계열 — 산술 지표(unit: chars|tokens)
+│   ├── metrics_universal.py       # 분산·장문율·쉼표 계열 — 산술 지표(unit: chars|tokens)
+│   ├── reinjection.py             # G3 게이트 — 윤문 전후 재측정, 원시 건수로 판정
+│   └── detect_language.py         # 유니코드 스크립트 비율 (ko|en|unknown, 판정 불가 시 ko)
+├── lang/                          # 언어별 데이터·지표 (다국어 R2a) — 프로덕션 런타임
+│   └── en/
+│       ├── lexicon.json           # Kobak 초과 어휘 407건 (router_eligible 12건만 라우터에 사용)
+│       ├── metrics_en.py          # 영어 route_hint — 계측형 주도 + 렉시콘 보조
+│       └── quick-rules.md         # 영어 룰북 Tier A 7 + Tier B 7 (근거 등급 표기)
 ├── scripts/
 │   ├── prepare_monolith_input.py  # input shim — 텍스트 위생 + 정량 점수 + route_hint 산출 + 결합 입력 (`--diagnosis`·`--chunk`·`--no-sanitize`)
 │   ├── sanitize_text.py           # 텍스트 위생 — 제로폭·bidi·특수공백 제거 + 한글 NFD→NFC (결정적, LLM 0콜)
