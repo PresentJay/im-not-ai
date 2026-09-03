@@ -49,8 +49,10 @@ HEAVY_MIN_LEXICON_PER_1K = 4.0
 #   comma_segment_length  AUC 0.149 (|0.5차| 0.351)  AI 가 짧게 끊는다
 #   comma_inclusion_rate  AUC 0.719 (|0.5차| 0.219)  AI 가 많이 쓴다
 # 임계는 인간 사분위수 기반 (lang/en/baseline.json recommended_thresholds).
-COMMA_SEGMENT_AI_MAX = 10.82   # 인간 하위 25% — 이 미만이면 AI 방향
-COMMA_INCLUSION_AI_MIN = 73.3  # 인간 상위 25% — 이 초과면 AI 방향
+# 판별력 순(AUC 의 0.5 이탈폭): usage 0.388 > segment 0.351 > inclusion 0.219.
+COMMA_USAGE_AI_MIN = 1.26      # 인간 상위 25% — 이 초과면 AI 방향 (AUC 0.888, 최강)
+COMMA_SEGMENT_AI_MAX = 10.82   # 인간 하위 25% — 이 미만이면 AI 방향 (AUC 0.851)
+COMMA_INCLUSION_AI_MIN = 73.3  # 인간 상위 25% — 이 초과면 AI 방향 (AUC 0.719)
 
 # 밀도 지표를 쓰기 위한 최소 분량. 39토큰 글에서 렉시콘 1건이면 25.6/1k 가
 # 나와 heavy 로 튄다 — 비율이 아니라 분모가 만든 수다.
@@ -133,8 +135,12 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
     else:
         seg = universal["comma_segment_length"]
         incl = universal["comma_inclusion_rate"]
-        # 판별력 순으로 센다 — 쉼표 절 길이(AUC 0.351) > 쉼표 포함률(0.219).
+        usage = universal["comma_usage_rate"]
+        # 판별력 순으로 센다. 교차언어 확인: 한국어 abstract 셀에서도
+        # usage 1.39배·inclusion 1.37배로 같은 방향이다(baseline.json cross_language).
         signals = []
+        if usage > COMMA_USAGE_AI_MIN:
+            signals.append(f"문장당 쉼표 {usage}(>{COMMA_USAGE_AI_MIN})")
         if seg and seg < COMMA_SEGMENT_AI_MAX:
             signals.append(f"쉼표 절 {seg}어(<{COMMA_SEGMENT_AI_MAX})")
         if incl > COMMA_INCLUSION_AI_MIN:
@@ -151,8 +157,8 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
         else:
             hint = "light"
             reason = (
-                f"쉼표 절 {seg}어 · 포함률 {incl}% · 렉시콘 {per_1k}/1k — "
-                f"인간 범위, 이미 잘 쓴 글"
+                f"문장당 쉼표 {usage} · 절 {seg}어 · 포함률 {incl}% · "
+                f"렉시콘 {per_1k}/1k — 인간 범위, 이미 잘 쓴 글"
             )
 
     return {

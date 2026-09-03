@@ -74,12 +74,22 @@ class DispersionTests(unittest.TestCase):
         text = "a b c, d e f."
         self.assertAlmostEqual(self.m.comma_segment_length(text), 3.0, places=1)
 
+    def test_comma_usage_rate_matches_korean_definition(self) -> None:
+        """한국어 metrics.py 와 같은 정의 — 문장당 평균 쉼표 수."""
+        self.assertAlmostEqual(self.m.comma_usage_rate("a, b, c. d e."), 1.0, places=2)
+        self.assertEqual(self.m.comma_usage_rate("no commas here."), 0.0)
+        self.assertEqual(self.m.comma_usage_rate(""), 0.0)
+
+    def test_comma_usage_rate_counts_fullwidth(self) -> None:
+        self.assertAlmostEqual(self.m.comma_usage_rate("가， 나. 다."), 0.5, places=2)
+
     def test_compute_universal_returns_all_keys(self) -> None:
         out = self.m.compute_universal(EN_BURSTY, long_threshold=35, unit="tokens")
         for key in (
             "sentence_length_dispersion",
             "long_sentence_rate",
             "comma_inclusion_rate",
+            "comma_usage_rate",
             "comma_segment_length",
             "sentences",
             "tokens",

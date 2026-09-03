@@ -70,6 +70,19 @@ def comma_inclusion_rate(text: str) -> float:
     return round(hits / len(sentences) * 100, 2)
 
 
+def comma_usage_rate(text: str) -> float:
+    """문장당 평균 쉼표 수.
+
+    한국어 `metrics.py::comma_usage_rate` 와 **같은 정의**다 — 두 언어의
+    baseline 셀을 같은 축에서 대조하기 위해 계산식을 그대로 옮겼다.
+    한국어 실측(baseline.json): abstract 1.39배 · essay 2.27 · column 4.92 · report 3.16.
+    """
+    sentences = split_sentences(text)
+    if not sentences:
+        return 0.0
+    return round(sum(len(_COMMA_RE.findall(s)) for s in sentences) / len(sentences), 2)
+
+
 def comma_segment_length(text: str) -> float:
     """쉼표로 분절된 절의 평균 토큰 수."""
     segments = []
@@ -95,5 +108,6 @@ def compute_universal(
         "sentence_length_dispersion": sentence_length_dispersion(text, unit),
         "long_sentence_rate": long_sentence_rate(text, long_threshold, unit),
         "comma_inclusion_rate": comma_inclusion_rate(text),
+        "comma_usage_rate": comma_usage_rate(text),
         "comma_segment_length": comma_segment_length(text),
     }
