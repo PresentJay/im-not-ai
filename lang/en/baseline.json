@@ -1,0 +1,93 @@
+{
+ "version": "0.1",
+ "captured_at": "2026-09-03T10:36:12+00:00",
+ "evidence": "E1 — 자체 대조 코퍼스. 인간 판정 기준은 시점(ChatGPT 공개 이전).",
+ "genre": "academic abstract (arXiv cs.CL)",
+ "caveat": "장르가 학술 초록이다. 칼럼·블로그 임계로 바로 쓰면 안 된다. G2 과업 통제를 위해 AI 쪽은 같은 논문 제목으로 생성했다.",
+ "human": {
+  "source": "arXiv cs.CL, submittedDate [201501010000+TO+202112310000]",
+  "n": 42,
+  "sentence_length_dispersion": {
+   "median": 8.01,
+   "mean": 8.36,
+   "sd": 3.07,
+   "min": 2.32,
+   "max": 16.3
+  },
+  "long_sentence_rate": {
+   "median": 12.5,
+   "mean": 15.27,
+   "sd": 16.22,
+   "min": 0.0,
+   "max": 60.0
+  },
+  "comma_inclusion_rate": {
+   "median": 57.73,
+   "mean": 57.52,
+   "sd": 22.56,
+   "min": 0.0,
+   "max": 100.0
+  },
+  "comma_segment_length": {
+   "median": 12.5,
+   "mean": 12.59,
+   "sd": 2.57,
+   "min": 7.94,
+   "max": 19.11
+  }
+ },
+ "ai": {
+  "models": [
+   "claude-opus-5",
+   "claude-sonnet-5",
+   "claude-haiku-4-5-20251001"
+  ],
+  "n": 21,
+  "sentence_length_dispersion": {
+   "median": 6.98,
+   "mean": 7.06,
+   "sd": 2.72,
+   "min": 3.5,
+   "max": 12.37
+  },
+  "long_sentence_rate": {
+   "median": 12.5,
+   "mean": 16.43,
+   "sd": 18.03,
+   "min": 0.0,
+   "max": 66.67
+  },
+  "comma_inclusion_rate": {
+   "median": 71.43,
+   "mean": 73.75,
+   "sd": 12.76,
+   "min": 50.0,
+   "max": 100.0
+  },
+  "comma_segment_length": {
+   "median": 9.05,
+   "mean": 9.37,
+   "sd": 1.84,
+   "min": 6.32,
+   "max": 14.08
+  }
+ },
+ "ratios": {
+  "sentence_length_dispersion": 0.871,
+  "long_sentence_rate": 1.0,
+  "comma_inclusion_rate": 1.237,
+  "comma_segment_length": 0.724
+ },
+ "discrimination_auc": {
+  "sentence_length_dispersion": 0.38,
+  "long_sentence_rate": 0.505,
+  "comma_inclusion_rate": 0.719,
+  "comma_segment_length": 0.149
+ },
+ "auc_note": "AUC = AI 값이 인간 값보다 클 확률(쌍 비교). 0.5 = 무작위. |AUC-0.5| >= 0.20 만 판별 가능으로 본다. 실측 결과 쉼표 계열(0.351·0.219)이 분산(0.120)·장문율(0.005)보다 훨씬 강하다 — 라우터가 주 신호로 쓰던 분산이 이 장르에서는 약하다.",
+ "recommended_thresholds": {
+  "comma_segment_length_max": 10.82,
+  "comma_inclusion_rate_min": 73.3,
+  "note": "인간 사분위수 기반. comma_segment_length 는 인간 하위 25% 미만이면 AI 방향, comma_inclusion_rate 는 인간 상위 25% 초과면 AI 방향. 분산은 판별력이 약해 임계를 제시하지 않는다."
+ }
+}

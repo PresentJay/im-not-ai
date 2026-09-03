@@ -38,9 +38,19 @@ ROUTE_HEAVY_MIN_CHARS = 15000
 LIGHT_MAX_LEXICON_PER_1K = 0.0
 HEAVY_MIN_LEXICON_PER_1K = 4.0
 
-# 분산 임계. 스파이크: AI 에세이 6.7~6.8 vs 대조 16.3~18.8.
-# 보수적으로 8.0 을 "균일하다"의 경계로 두고 중간대는 standard 로 흘린다.
-UNIFORM_DISPERSION_MAX = 8.0
+# ⚠️ 분산 임계 폐기 (2026-09-03, E1 실측).
+# 초판 UNIFORM_DISPERSION_MAX = 8.0 은 **인간 학술 초록 42편 중 21편(50%)을
+# AI 로 오판**했다. 스파이크의 '대조군'이 마크다운 표·리스트가 섞인 문서라
+# 분산이 16~18 로 부풀려져 있었고, 그걸 인간 범위로 착각한 결과다.
+# 실측: 인간 중앙값 8.01 (2.32~16.3) vs AI 6.98 (3.5~12.37) — AUC 0.380,
+# |0.5차| 0.120 으로 **판별력 약함**. 라우터 판정에서 뺀다.
+#
+# 대신 쉼표 계열을 쓴다 — 같은 실측에서 훨씬 강했다:
+#   comma_segment_length  AUC 0.149 (|0.5차| 0.351)  AI 가 짧게 끊는다
+#   comma_inclusion_rate  AUC 0.719 (|0.5차| 0.219)  AI 가 많이 쓴다
+# 임계는 인간 사분위수 기반 (lang/en/baseline.json recommended_thresholds).
+COMMA_SEGMENT_AI_MAX = 10.82   # 인간 하위 25% — 이 미만이면 AI 방향
+COMMA_INCLUSION_AI_MIN = 73.3  # 인간 상위 25% — 이 초과면 AI 방향
 
 # 밀도 지표를 쓰기 위한 최소 분량. 39토큰 글에서 렉시콘 1건이면 25.6/1k 가
 # 나와 heavy 로 튄다 — 비율이 아니라 분모가 만든 수다.
@@ -120,15 +130,30 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
             f"{tokens} tokens (<{MIN_TOKENS_FOR_RATE}) — 밀도 판정 불가, "
             f"기본 경로 (렉시콘 {total}건 · 분산 {dispersion})"
         )
-    elif per_1k >= HEAVY_MIN_LEXICON_PER_1K and dispersion <= UNIFORM_DISPERSION_MAX:
-        hint = "heavy"
-        reason = f"렉시콘 {per_1k}/1k + 분산 {dispersion} — 어휘 티 밀집 + 리듬 균일"
-    elif per_1k <= LIGHT_MAX_LEXICON_PER_1K and dispersion > UNIFORM_DISPERSION_MAX:
-        hint = "light"
-        reason = f"렉시콘 {per_1k}/1k · 분산 {dispersion} — 이미 잘 쓴 글"
     else:
-        hint = "standard"
-        reason = f"렉시콘 {per_1k}/1k · 분산 {dispersion} — 진단 + 단일 윤문"
+        seg = universal["comma_segment_length"]
+        incl = universal["comma_inclusion_rate"]
+        # 판별력 순으로 센다 — 쉼표 절 길이(AUC 0.351) > 쉼표 포함률(0.219).
+        signals = []
+        if seg and seg < COMMA_SEGMENT_AI_MAX:
+            signals.append(f"쉼표 절 {seg}어(<{COMMA_SEGMENT_AI_MAX})")
+        if incl > COMMA_INCLUSION_AI_MIN:
+            signals.append(f"쉼표 포함률 {incl}%(>{COMMA_INCLUSION_AI_MIN})")
+        if per_1k >= HEAVY_MIN_LEXICON_PER_1K:
+            signals.append(f"렉시콘 {per_1k}/1k")
+
+        if len(signals) >= 2:
+            hint = "heavy"
+            reason = "AI 신호 " + " + ".join(signals)
+        elif signals:
+            hint = "standard"
+            reason = "AI 신호 " + " · ".join(signals)
+        else:
+            hint = "light"
+            reason = (
+                f"쉼표 절 {seg}어 · 포함률 {incl}% · 렉시콘 {per_1k}/1k — "
+                f"인간 범위, 이미 잘 쓴 글"
+            )
 
     return {
         "lang": "en",
