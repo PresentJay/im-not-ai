@@ -88,6 +88,11 @@ def _count(pattern: str, flags: int = 0) -> Callable[[str], int]:
 
 # 영어: em dash(윤문 모델의 개인어 — 스파이크에서 2→5 실측) + 담화 공식.
 # 어휘 항목은 lang/en/lexicon.json 의 router_eligible 에서 가져온다.
+#
+# ⚠️ hedge·수동태·contraction 은 여기서 세지 않는다. G3 는 "늘어난 것"을 잡는데,
+# 그것들의 위험은 **줄어드는 것**이다(LLM 이 이미 과소 사용 — lang/en/scholarship.md).
+# 소실 감시는 별도 게이트가 필요하다 — 한국어 verify_gates 의 P5 서법 축에 대응하며
+# 영어판은 아직 없다. 룰북의 「건드리면 안 되는 것」이 현재 유일한 방어다.
 def _en_counters() -> dict[str, Callable[[str], int]]:
     counters: dict[str, Callable[[str], int]] = {
         "em_dash": _count(r"—"),

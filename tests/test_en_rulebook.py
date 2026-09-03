@@ -14,11 +14,13 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.abspath(os.path.join(_HERE, ".."))
 _RULEBOOK = os.path.join(_ROOT, "lang", "en", "quick-rules.md")
 
-TIER_A = ("C-8", "F-7", "E-1", "F-4", "G-1", "G-2", "A-9")
+# EN-* 는 한국어 대응물이 없는 영어 고유 규칙이다.
+TIER_A = ("C-8", "F-7", "E-1", "F-4", "EN-1")
 TIER_B = ("C-1", "C-2", "C-3", "C-5", "C-6", "C-9", "C-10")
-EXCLUDED = ("J-3", "H-1", "H-3", "G-3", "D-4")
+# A-9·G-1·G-2 는 v0.2 에서 철회·반전됐다 — 규칙 표에 있으면 안 된다.
+EXCLUDED = ("J-3", "H-1", "H-3", "G-3", "D-4", "A-9", "G-1", "G-2")
 
-_RULE_ROW = re.compile(r"^\|\s*\*\*([A-J]-\d+)\*\*")
+_RULE_ROW = re.compile(r"^\|\s*\*\*([A-Z]{1,2}-\d+)\*\*")
 
 
 def _read() -> str:
@@ -47,6 +49,21 @@ class EnRulebookTests(unittest.TestCase):
             self.assertNotIn(
                 rid, self.ids, f"{rid} 는 규칙에서 제외돼야 한다(근거 미달)"
             )
+
+    def test_protected_features_documented(self) -> None:
+        """LLM 이 과소 사용하는 것 — 제거하면 역효과다. v0.2 최대 정정."""
+        self.assertIn("건드리면 안 되는 것", self.text)
+        for feat in ("hedges", "agentless passive", "contraction"):
+            self.assertIn(feat, self.text, f"보호 대상 누락: {feat}")
+
+    def test_e1_prescribes_short_not_long(self) -> None:
+        """영어 LLM 문장은 이미 길다 — 장문 추가는 반대 방향."""
+        e1 = [r for r in self.rows if _RULE_ROW.match(r).group(1) == "E-1"]
+        self.assertTrue(e1)
+        self.assertIn("짧은 문장", e1[0])
+
+    def test_links_scholarship(self) -> None:
+        self.assertIn("scholarship.md", self.text)
 
     def test_every_rule_has_evidence_grade(self) -> None:
         self.assertGreaterEqual(len(self.rows), 12)

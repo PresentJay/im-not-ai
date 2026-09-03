@@ -1,5 +1,10 @@
-# English AI-Tell Rulebook (quick-rules, v0.1)
+# English AI-Tell Rulebook (quick-rules, v0.2)
 
+> **v0.2 정정 (2026-09-03).** Tier A 7규칙 중 **3개(A-9·G-1·G-2)가 방향이 반대**였다.
+> 한국어에서 이식하고 PDF 페치 요약을 믿은 결과이며, 학술 원문 확인에서 드러났다.
+> 셋은 「건드리면 안 되는 것」으로 옮겼고, 누락돼 있던 최대 효과 항목(PPC 현재분사절
+> 2~5배)을 추가했다. 전말: `${SKILL_ROOT}/lang/en/scholarship.md` 「정정 기록」.
+>
 > **근거 상태 — 먼저 읽을 것.** 이 룰북의 규칙 중 **E1(자체 대조 코퍼스 실측)은
 > 하나도 없다.** 한국어 실측이 이식된 것과 외부 발표(E2)·자체 스파이크(E3)뿐이다.
 > 그래서 영어 경로는 **light/standard 만 열고 heavy·finalize 는 닫는다** —
@@ -28,13 +33,11 @@
 
 | ID | 트리거 | 처방 | 근거 |
 |---|---|---|---|
-| **C-8** | 대구·antithesis 반복. 프레임이 여러 개다: `not X but Y` · `it's not X, it's Y` · `neither X nor Y` · `less about X than Y` · `is not whether … but` · `rather than X, Y` · `not merely/simply/just X` | 문서당 1회까지 허용. 나머지는 **긍정형 단언**으로 편다: `It's not a decline, it's a redistribution` → `It is a redistribution` | **E1→이식** ko 12.1× 전모델·과업무관(최강 신호) + **E3** 영어 문헌이 LLM hallmark 로 지목 |
-| **F-7** | 범용 동사 수렴 — `delve` `underscore` `showcase` `leverage` `facilitate` `foster` `streamline` `highlight` `navigate` `harness` | 구체 동사로 교체하거나 문장을 재구성. `This underscores a shift` → `The numbers show a shift` / `Costs rose` | **E2** Kobak 2025 (초과 어휘의 65.8%가 동사, 원자료 확인) + **E1→이식** ko F-7 3.4× |
-| **E-1** | 문장 길이 **분산 부족**. AI 는 중앙값 부근에 몰린다(스파이크 stdev 6.7~6.8 vs 대조 16.3~18.8) | 짧은 문장 1~2개 + 35어 이상 장문 1개를 문단마다. **인접 문장을 잇되 내용을 추가하지 않는다. 대시로 잇지 않는다(철칙 #6)** | **E2** Reinhart 2025 (LLM 은 길면서 변이가 작다) + **E1→이식** ko G²=60.9 |
-| **F-4** | 명사화 과다 — `-tion` `-ment` `-ness` `-ity` 체인 | 동사로 되돌린다. `the implementation of the policy` → `implementing the policy` / `the policy took effect` | **E2** Reinhart 2025 (nominalization LLM 과다) + **E1→이식** ko F-4 |
-| **G-1** | 관측형 완곡 — `it appears that` `it seems` `may suggest` `arguably` `tends to be` | 단언하거나 주체를 밝힌다. `It appears that costs rose` → `Costs rose` / `The BLS reports costs rose` | **E2** Reinhart 2025 (hedges/downtoners LLM 과다) + **E1→이식** ko G-1 |
-| **G-2** | 이중·삼중 완곡 — `may potentially` `might possibly` `could arguably` `may well be able to` | 완곡을 하나만 남긴다. `may potentially help` → `may help` | **E2** Reinhart 2025 + **E1→이식** ko G-2 |
-| **A-9** | 수동태 남용 — 행위자가 있는데 숨긴 문장 | 행위자를 주어로 올린다. `The policy was adopted by the council` → `The council adopted the policy`. 행위자가 정말 불명이면 유지 | **E2** Reinhart 2025 (passives LLM 과다) + **E1→이식** ko A-9 |
+| **C-8** | 대구·antithesis 반복. 프레임이 여러 개다: `not X but Y` · `it's not X, it's Y` · `neither X nor Y` · `less about X than Y` · `is not whether … but` · `rather than X, Y` · `not merely/simply/just X` | 문서당 1회까지 허용. 나머지는 **긍정형 단언**으로 편다: `It's not a decline, it's a redistribution` → `It is a redistribution` | **E3** — ko 12.1× 는 한국어 실측이고 **영어 계량 연구를 찾지 못했다.** 구문복잡도 연구의 coordination 편중이 간접 근거 |
+| **F-7** | 범용 동사 수렴 — `delve` `underscore` `showcase` `leverage` `facilitate` `foster` `streamline` `highlight` `navigate` `harness` | 구체 동사로 교체하거나 문장을 재구성. `This underscores a shift` → `The numbers show a shift` / `Costs rose` | **E2** Kobak 2025 (초과 어휘 65.8%가 동사, 원자료 확인). ⚠️ **E3 반증**: 현세대 Claude 20편에서 라우터 렉시콘 0건 — 이 층은 대형 모델에서 상당 부분 사라졌다 |
+| **E-1** | 문장 길이 **분산 부족**. AI 는 중앙값 부근에 몰린다(스파이크 stdev 6.7~6.8 vs 대조 16.3~18.8; 교차모델 haiku 6.41 · opus 8.39 · sonnet 9.91) | **짧은 문장(5~12어)을 넣어 분산을 올린다.** ⚠️ 장문을 더하지 말 것 — LLM 문장은 이미 인간보다 길다(Reinhart). 한국어 E-1('장문 부재')의 처방을 그대로 옮기면 반대로 간다. **대시로 잇지 않는다(철칙 #6)** | **E2** Reinhart 2025 PNAS |
+| **EN-1** | **현재분사절 남발** — `…, reflecting a broader shift` · `…, highlighting the need` · `…, gathering clauses as it goes` | 종속절·독립문으로 푼다. `X, reflecting Y` → `X. That reflects Y.` / `X, which reflects Y`. **내용 추가 금지** | **E2** Reinhart 2025 — 인간의 **2~5배**, 보고된 최대 차이 중 하나 |
+| **F-4** | 명사화 과다 — `-tion` `-ment` `-ness` `-ity` 체인 | 동사로 되돌린다. `the implementation of the policy` → `implementing the policy` / `the policy took effect` | **E2 ×3** Reinhart 2025 (**1.5~2배**) + Mizumoto 2024 + Jiang & Hyland 2025 — 3개 연구 독립 수렴, 이 룰북에서 근거 최강 |
 
 ## Tier B — 구조·서식 (언어 무관성이 자명)
 
@@ -48,6 +51,20 @@
 | **C-9** | 인접 문장에서 `1) … 2) … 3)` 인덱싱 | 산문 연결로 바꾼다 | **E1→이식** ko C-9 |
 | **C-10** | 헤딩이 거의 자동으로 `X: Y` 콜론 부제 | 콜론을 걷어낸 한 구절 헤딩으로 | **E1→이식** ko C-10 |
 
+## 🛑 건드리면 안 되는 것 — LLM 이 **적게** 쓰는 것
+
+v0.1 이 여기서 틀렸다. hedging·수동태 제거를 Tier A 로 권장했는데 **방향이 반대**였다.
+
+| 항목 | 왜 보호하나 | 근거 |
+|---|---|---|
+| **hedges · modals** (`may` `might` `appears to` `tends to` `arguably`) | LLM 이 인간보다 **적게** 쓴다. 제거하면 더 AI처럼 된다. 게다가 논증문에서는 **주장의 강도를 바꾸는 내용 변경**(철칙 #1) | **E2 ×3** Jiang & Hyland 2025 (hedges·boosters 유의하게 낮음) · Mizumoto 2024 (인간이 modals·epistemic marker 더 많음) · Reinhart 2025 |
+| **agentless passive** | LLM 이 인간의 **절반**만 쓴다. "행위자를 주어로" 처방은 역효과 | **E2** Reinhart 2025 |
+| **contraction** | LLM 과소 사용. 펴면 티가 는다 (철칙 #5) | **E2** Reinhart 2025 |
+| **1·2인칭 대명사 · discourse marker** | LLM 과소 사용. **관측 전용** — 없는 인칭을 심으면 화자가 바뀐다 | **E2** Mizumoto 2024 · Reinhart 2025 |
+
+> **처방 불가, 관측 전용.** 결핍을 메우려고 없던 hedge·인칭을 심지 않는다
+> (`core/principles.md` 「결핍 신호 정책」).
+
 ## 규칙으로 세우지 않은 것 (근거 미달 — 넣지 말 것)
 
 | ID | 왜 뺐나 |
@@ -57,6 +74,8 @@
 | 메타 진입 (ko H-3) | ko 에서 haiku 단독. 사람도 쓰는 정상 담화 장치 |
 | 안전 균형 (ko G-3) | ko 에서 표본 부족으로 판정 불가(hold) |
 | hype 어휘 (ko D-4) | ko 과업매칭 대조군에서 0.00 — 근거 약함 |
+| **A-9 수동태 승격** | **v0.1 에서 철회.** LLM 의 agentless passive 는 인간의 절반(Reinhart 2025) — 처방이 반대였다 |
+| **G-1 · G-2 완곡 제거** | **v0.1 에서 반전.** 3개 연구가 LLM 의 hedge 과소 사용에 수렴 — 위 「건드리면 안 되는 것」으로 이동 |
 
 ## 결핍 신호 — 처방하지 않는다
 
@@ -71,3 +90,6 @@ Reinhart 2025 는 LLM 이 contraction · 1·2인칭 대명사 · 현재시제를
 2. 원문에 없던 표현을 새로 심지 않았는가 — **특히 em dash 를 늘리지 않았는가**
 3. contraction·인칭·시제를 원문보다 격식화하지 않았는가
 4. 문장 길이 분산이 올라갔는가(줄었으면 실패)
+## 학술 근거
+
+규칙별 인용·등급·caveat 전문: `${SKILL_ROOT}/lang/en/scholarship.md`

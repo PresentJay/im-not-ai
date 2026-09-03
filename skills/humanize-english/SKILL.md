@@ -82,10 +82,13 @@ SKILL_ROOT="$(d="$(cd -P "${CLAUDE_SKILL_DIR}" && pwd)"; \
 
 1. `Read` 로 `01_input_with_metrics.txt` + `${SKILL_ROOT}/lang/en/quick-rules.md`.
 2. `00_metrics.json` 의 `route_signals` 를 겨냥에 쓴다:
-   - `dispersion` 이 낮으면 → E-1 우선(문장 길이 변주). **대시로 잇지 말 것.**
+   - `dispersion` 이 낮으면 → E-1 우선. **짧은 문장을 넣어 올린다** — 장문 추가는
+     반대 방향이다(LLM 문장은 이미 인간보다 길다). **대시로 잇지 말 것.**
    - `lexicon.by_family` 에 `F-7` 이 있으면 → 범용 동사 교체 우선.
    - `comma_inclusion_rate` 가 높으면 → 쉼표 분절 정리.
 3. Tier A 우선, Tier B 는 서식 문제가 실재할 때만.
+4. **hedge·수동태·contraction·인칭은 건드리지 않는다** — LLM 이 이미 과소
+   사용하므로 제거하면 더 AI처럼 된다(룰북 「건드리면 안 되는 것」).
 4. `Write` 로 `final.md`.
 5. Phase 2 게이트 실행.
 
@@ -158,4 +161,5 @@ python3 ${SKILL_ROOT}/core/underedit.py \
 - 언어 무관 원리·증거 기준: `${SKILL_ROOT}/core/principles.md`
 - 영어 룰북: `${SKILL_ROOT}/lang/en/quick-rules.md` (Tier A 7 + Tier B 7)
 - 영어 렉시콘: `${SKILL_ROOT}/lang/en/lexicon.json` (Kobak 407건, 라우터용 12건)
+- **학술 근거 SSOT: `${SKILL_ROOT}/lang/en/scholarship.md`** — 규칙별 인용·등급·정정 기록
 - 설계·근거: `docs/superpowers/specs/2026-09-02-multilingual-design.md`
