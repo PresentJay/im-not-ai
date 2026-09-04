@@ -105,7 +105,9 @@
   "comma_segment_length_max": 10.82,
   "comma_inclusion_rate_min": 73.3,
   "note": "인간 사분위수 기반. comma_segment_length 는 인간 하위 25% 미만이면 AI 방향, comma_inclusion_rate 는 인간 상위 25% 초과면 AI 방향. 분산은 판별력이 약해 임계를 제시하지 않는다.",
-  "comma_usage_rate_min": 1.26
+  "comma_usage_rate_min": 1.26,
+  "en1_participial_min": 6.37,
+  "en2_be_verb_max": 12.87
  },
  "cross_language": {
   "note": "한국어 baseline.json 의 같은 장르(abstract)·같은 지표와 직접 대조. 두 언어가 독립 코퍼스인데 방향과 크기가 맞으면 커널 명제의 근거가 된다.",
@@ -116,6 +118,75 @@
   "comma_usage_rate": {
    "ko_ratio": 1.39,
    "en_ratio": 1.749
+  }
+ },
+ "era_confound": {
+  "note": "인간 코퍼스는 2015~2020, AI 는 2026 이다. 배수에 저자 효과와 시대 효과가 섞인다. 인간 초기(2015~17) vs 후기(2018~20)를 갈라 시대 효과만 측정했다.",
+  "method": "시대 AUC = 인간 후기 vs 인간 초기. AI AUC = AI vs 인간 후기(시대 격차 최소화).",
+  "results": {
+   "EN-1_participial": {
+    "era_delta": 0.031,
+    "ai_delta": 0.211,
+    "era_share": 0.15
+   },
+   "EN-2_be_verbs": {
+    "era_delta": 0.036,
+    "ai_delta": 0.287,
+    "era_share": 0.13
+   },
+   "dispersion": {
+    "era_delta": 0.062,
+    "ai_delta": 0.156,
+    "era_share": 0.4
+   },
+   "comma_usage_rate": {
+    "era_delta": 0.195,
+    "ai_delta": 0.354,
+    "era_share": 0.55
+   },
+   "comma_inclusion_rate": {
+    "era_delta": 0.107,
+    "ai_delta": 0.183,
+    "era_share": 0.58
+   },
+   "comma_segment_length": {
+    "era_delta": 0.175,
+    "ai_delta": 0.307,
+    "era_share": 0.57
+   }
+  },
+  "comma_trend": {
+   "slope_per_year": 0.0789,
+   "r_squared": 0.487,
+   "human_2026_extrapolated": 1.59,
+   "ai_2026_measured": 1.67,
+   "warning": "인간 쉼표/문장이 연 +0.079 로 오르는 중이다. 선형 외삽하면 2026 인간이 1.59 로 AI 1.67 에 근접해 격차가 0.81 → 0.08 로 줄어든다. 다만 R²=0.487 로 추세가 노이지해 외삽 자체는 신뢰할 수 없다. **위험 표기이지 확정이 아니다.**"
+  },
+  "action": "시대 강건성 순으로 라우터 신호를 재배치했다 — EN-2(13%)·EN-1(15%) 우선, 쉼표 계열(55~58%)은 보조. 시대 교란은 '2022 이전 = 인간' 설계에 내재하며 완전히 제거할 수 없다(한국어도 동일 구조)."
+ },
+ "router_guard_calibration": {
+  "metric": "MIN_TOKENS_FOR_RATE",
+  "old": 200,
+  "new": 120,
+  "why": "초판 200 은 39토큰 사고 하나를 보고 잡은 과잉 보정이었다. arXiv 초록 중앙값이 162토큰이라 코퍼스의 71~86% 가 이 가드에 걸려 라우터가 사실상 꺼져 있었다. 그 상태로 낸 '인간 83% standard' 검증 수치는 신호가 아니라 가드를 측정한 값이다.",
+  "separation_by_guard": {
+   "200": 0.19,
+   "150": 0.88,
+   "120": 0.95,
+   "100": 0.95
+  },
+  "separation_def": "AI heavy율 − 인간 heavy율 + 인간 light율 − AI light율",
+  "result_at_120": {
+   "human": {
+    "light": 0.31,
+    "standard": 0.43,
+    "heavy": 0.26
+   },
+   "ai": {
+    "light": 0.0,
+    "standard": 0.1,
+    "heavy": 0.9
+   }
   }
  }
 }

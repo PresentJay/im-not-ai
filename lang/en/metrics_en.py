@@ -49,7 +49,17 @@ HEAVY_MIN_LEXICON_PER_1K = 4.0
 #   comma_segment_length  AUC 0.149 (|0.5차| 0.351)  AI 가 짧게 끊는다
 #   comma_inclusion_rate  AUC 0.719 (|0.5차| 0.219)  AI 가 많이 쓴다
 # 임계는 인간 사분위수 기반 (lang/en/baseline.json recommended_thresholds).
-# 판별력 순(AUC 의 0.5 이탈폭): usage 0.388 > segment 0.351 > inclusion 0.219.
+# ── 시대 강건성 우선 배치 (2026-09-03) ──────────────────────────
+# 인간 코퍼스는 2015~2020, AI 는 2026 이다. 인간 초기 vs 후기로 시대 효과만
+# 따로 재보니 지표마다 오염도가 크게 달랐다(baseline.json era_confound):
+#   EN-2 be동사 13% · EN-1 분사절 15% · 분산 40% · 쉼표 계열 55~58%
+# 쉼표는 인간 사용이 연 +0.079 로 오르는 중이라, 외삽하면 2026 인간(1.59)이
+# AI(1.67)에 근접한다. R²=0.487 이라 외삽은 못 믿지만 위험은 실재한다.
+# → **시대에 강건한 EN-1·EN-2 를 주 신호로, 쉼표는 보조로 쓴다.**
+EN1_PARTICIPIAL_AI_MIN = 6.37   # 인간 상위 25% — 초과면 AI 방향 (AUC 0.726, 시대 15%)
+EN2_BE_VERB_AI_MAX = 12.87      # 인간 하위 25% — 미만이면 AI 방향 (AUC 0.238, 시대 13%)
+
+# 보조 — 판별력은 높으나 시대 교란이 크다(55~58%).
 COMMA_USAGE_AI_MIN = 1.26      # 인간 상위 25% — 이 초과면 AI 방향 (AUC 0.888, 최강)
 COMMA_SEGMENT_AI_MAX = 10.82   # 인간 하위 25% — 이 미만이면 AI 방향 (AUC 0.851)
 COMMA_INCLUSION_AI_MIN = 73.3  # 인간 상위 25% — 이 초과면 AI 방향 (AUC 0.719)
@@ -57,11 +67,27 @@ COMMA_INCLUSION_AI_MIN = 73.3  # 인간 상위 25% — 이 초과면 AI 방향 (
 # 밀도 지표를 쓰기 위한 최소 분량. 39토큰 글에서 렉시콘 1건이면 25.6/1k 가
 # 나와 heavy 로 튄다 — 비율이 아니라 분모가 만든 수다.
 # `core/principles.md` G3 의 "밀도 지표를 볼 때는 분모를 함께 본다"가
-# 라우터 자신에게도 적용된다. 이 아래에서는 어휘·분산 판정을 하지 않고
-# standard(안전한 기본값)로 보낸다.
-MIN_TOKENS_FOR_RATE = 200
+# 라우터 자신에게도 적용된다. 이 아래에서는 판정을 하지 않고 standard 로 보낸다.
+#
+# ⚠️ **초판 200 은 과잉 보정이었다(2026-09-03 실측).** 39토큰 사고 하나를 보고
+# 잡은 값인데, arXiv 초록 중앙값이 162토큰이라 **코퍼스의 71~86% 를 삼켰다** —
+# 라우터가 사실상 꺼져 있었고, "인간 83% standard" 같은 검증 수치가 신호가
+# 아니라 이 가드를 측정한 값이었다.
+# 임계별 분리도(AI heavy율−인간 heavy율 + 인간 light율−AI light율):
+#     200 → +0.19   150 → +0.88   120 → +0.95   100 → +0.95
+# 120 에서 포화하므로 120 을 쓴다. 120토큰에서 EN-1 1건 = 8.3/1k 로 임계(6.37)를
+# 넘는데, 인간 중앙값이 0.00 이라 1건도 유의하다.
+MIN_TOKENS_FOR_RATE = 120
 
 _WORD_BOUNDARY_CACHE: dict[int, re.Pattern] = {}
+
+# 시대 강건 신호 — 통사 프레임으로 잡는다(표면 어휘 목록은 장르를 타서 실패한다).
+_EN1_RE = re.compile(r",\s+\w+ing\b", re.I)
+_EN2_RE = re.compile(r"\b(?:is|are|was|were)\b", re.I)
+
+
+def _per_1k(text: str, rx: re.Pattern, tokens: int) -> float:
+    return round(len(rx.findall(text)) / (tokens or 1) * 1000, 2)
 
 
 def load_lexicon(path: str | None = None) -> dict:
@@ -138,7 +164,14 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
         usage = universal["comma_usage_rate"]
         # 판별력 순으로 센다. 교차언어 확인: 한국어 abstract 셀에서도
         # usage 1.39배·inclusion 1.37배로 같은 방향이다(baseline.json cross_language).
+        en1 = _per_1k(text, _EN1_RE, tokens)
+        en2 = _per_1k(text, _EN2_RE, tokens)
+        # 시대 강건 신호 우선.
         signals = []
+        if en1 > EN1_PARTICIPIAL_AI_MIN:
+            signals.append(f"분사절 {en1}/1k(>{EN1_PARTICIPIAL_AI_MIN})")
+        if en2 < EN2_BE_VERB_AI_MAX:
+            signals.append(f"be동사 {en2}/1k(<{EN2_BE_VERB_AI_MAX})")
         if usage > COMMA_USAGE_AI_MIN:
             signals.append(f"문장당 쉼표 {usage}(>{COMMA_USAGE_AI_MIN})")
         if seg and seg < COMMA_SEGMENT_AI_MAX:
@@ -174,6 +207,8 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
         "route_hint": hint,
         "route_reason": reason,
         "route_signals": {
+            "en1_participial_per_1k": _per_1k(text, _EN1_RE, tokens),
+            "en2_be_verb_per_1k": _per_1k(text, _EN2_RE, tokens),
             "lexicon_total": total,
             "lexicon_per_1k": per_1k,
             "dispersion": dispersion,
