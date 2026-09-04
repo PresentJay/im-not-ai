@@ -75,7 +75,15 @@ _SKIP_TITLE = re.compile(
 )
 # 인용·코드는 **필자의 산문이 아니다.** HN 댓글 셀이 이걸 안 걷어내서 문체 측정에
 # 남의 문장이 섞였다. 통째로 지운 뒤 남은 분량으로 판정한다.
-_DROP_BLOCK = re.compile(r"<(blockquote|pre|code|table|figure)\b.*?</\1>", re.S | re.I)
+# ⚠️ `style`·`script` 도 반드시 지운다. 초판이 이걸 빠뜨려 MathJax 의 CSS 가
+# 본문으로 들어갔다(".mjx-chtml {display: inline-block; line-height: 0; …}").
+# 그 두 편이 인간 분산 107.78·67.30 으로 최상위를 차지했다 — 문체가 아니라
+# 스타일시트를 측정한 값이다.
+_DROP_BLOCK = re.compile(
+    r"<(blockquote|pre|code|table|figure|style|script)\b.*?</\1>", re.S | re.I
+)
+# 그래도 남는 잔재가 있는 글은 버린다(인라인 style 속성, MathJax 파편).
+_JUNK = re.compile(r"mjx-|\{display:|font-size-adjust", re.I)
 _TAG = re.compile(r"<[^>]+>")
 
 
@@ -113,7 +121,7 @@ def fetch_human(n: int) -> list[dict]:
             if _SKIP_TITLE.search(title):
                 continue
             prose = _prose(body)
-            if len(prose.split()) < _MIN_SOURCE_WORDS:
+            if len(prose.split()) < _MIN_SOURCE_WORDS or _JUNK.search(prose):
                 continue
             assert post["postedAt"] < "2022", f"날짜 창 위반: {post['postedAt']}"
             got.append({"title": " ".join(title.split()),
@@ -125,12 +133,23 @@ def fetch_human(n: int) -> list[dict]:
     return got[:n]
 
 
-def _one(claude: str, workdir: str, title: str, model: str) -> dict | None:
-    prompt = (
+def _prompt(title: str, bare: bool) -> str:
+    """코칭 프롬프트 vs 맨 프롬프트.
+
+    맨 프롬프트 대조군이 필요한 이유: 분량·형식을 지정하면 그 지시가 AI 티를
+    눌러 "신호 없음"을 만들 수 있다. 1회차 blog 셀도 양쪽을 다 돌렸다.
+    """
+    sentinel = f"Output the essay between {_base._START} and {_base._END} and nothing else."
+    if bare:
+        return f'Write a blog essay titled "{title}". {sentinel}'
+    return (
         f'Write a blog essay titled "{title}". {_EXCERPT_WORDS - 50}-'
-        f"{_EXCERPT_WORDS + 50} words, prose only, no headings or bullet lists. "
-        f"Output the essay between {_base._START} and {_base._END} and nothing else."
+        f"{_EXCERPT_WORDS + 50} words, prose only, no headings or bullet lists. {sentinel}"
     )
+
+
+def _one(claude: str, workdir: str, title: str, model: str, bare: bool = False) -> dict | None:
+    prompt = _prompt(title, bare)
     for _ in range(_base._GEN_MAX_TRIES):
         proc = subprocess.run(
             [claude, "--model", model, "-p", prompt],
@@ -139,21 +158,22 @@ def _one(claude: str, workdir: str, title: str, model: str) -> dict | None:
         )
         text = _base.extract_sentinel(proc.stdout)
         if text and len(text.split()) >= 200 and not _base.is_contaminated(text):
-            return {"title": title, "text": _excerpt(text), "model": model}
+            return {"title": title, "text": _excerpt(text), "model": model,
+                    "prompt": "bare" if bare else "coached"}
     print(f"포기: {model} / {title[:40]}", file=sys.stderr)
     return None
 
 
-def gen_ai(titles: list[str]) -> list[dict]:
+def gen_ai(titles: list[str], *, models: tuple = None, bare: bool = False) -> list[dict]:
     """같은 제목으로 에세이를 생성한다 — G2 과업 통제.
 
     **저장소 밖에서, 부모 세션 환경변수를 지우고** 실행한다(오염 사고 대응).
     """
     claude = _base._which_claude()
     workdir = tempfile.mkdtemp(prefix="humanize_blog_gen_")
-    jobs = [(t, m) for t in titles for m in _base._MODELS]
+    jobs = [(t, m) for t in titles for m in (models or _base._MODELS)]
     with ThreadPoolExecutor(max_workers=_GEN_WORKERS) as pool:
-        rows = pool.map(lambda j: _one(claude, workdir, *j), jobs)
+        rows = pool.map(lambda j: _one(claude, workdir, *j, bare=bare), jobs)
     return [r for r in rows if r]
 
 
@@ -196,6 +216,17 @@ def _values(rows: list[dict], key: str) -> list[float]:
     return [_metrics(r["text"])[key] for r in rows]
 
 
+def _route_dist(rows: list[dict]) -> dict:
+    """라우터가 실제로 어떤 경로를 주는지 — 지표 AUC 보다 이게 실사용 판정이다."""
+    from collections import Counter
+
+    from metrics_en import compute_all_en  # noqa: PLC0415
+
+    counts = Counter(compute_all_en(r["text"])["route_hint"] for r in rows)
+    n = len(rows) or 1
+    return {k: round(counts.get(k, 0) / n, 2) for k in ("light", "standard", "heavy")}
+
+
 def _load(name: str) -> list[dict]:
     p = os.path.join(_WORK, name)
     if not os.path.exists(p):
@@ -214,6 +245,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="블로그 에세이 셀 (블로그 재시도)")
     ap.add_argument("--fetch-human", type=int, metavar="N")
     ap.add_argument("--gen-ai", type=int, metavar="N", help="제목 N개 × 3모델")
+    ap.add_argument("--gen-bare", type=int, metavar="N",
+                    help="맨 프롬프트 대조군 — 제목 N개 × opus 1모델")
     ap.add_argument("--report", action="store_true")
     args = ap.parse_args(argv)
 
@@ -230,12 +263,54 @@ def main(argv: list[str] | None = None) -> int:
         rows = gen_ai([r["title"] for r in human[: args.gen_ai]])
         _save("ai.json", rows)
         print(f"AI 에세이 {len(rows)}편 (제목 {args.gen_ai} × 모델 {len(_base._MODELS)})")
+    if args.gen_bare:
+        human = _load("human.json")
+        if not human:
+            raise SystemExit("먼저 --fetch-human 을 실행할 것")
+        rows = gen_ai([r["title"] for r in human[: args.gen_bare]],
+                      models=("claude-opus-5",), bare=True)
+        _save("ai_bare.json", rows)
+        print(f"맨 프롬프트 대조군 {len(rows)}편")
     if args.report:
         human, ai = _load("human.json"), _load("ai.json")
         if not human or not ai:
             raise SystemExit("human.json / ai.json 이 필요하다")
-        aucs = {k: auc(_values(ai, k), _values(human, k)) for k in _metrics(human[0]["text"])}
+        keys = list(_metrics(human[0]["text"]))
+        aucs = {k: auc(_values(ai, k), _values(human, k)) for k in keys}
         strong = {k: v for k, v in aucs.items() if abs(v - 0.5) >= 0.20}
+        # G1 — 모델별로 갈라 본다. **묶은 AUC 만 보면 방향이 반대인 모델끼리
+        # 상쇄돼 "신호 없음" 으로 보인다.** 이 셀이 정확히 그 경우였다.
+        per_model = {
+            model: {k: auc(_values(sub, k), _values(human, k)) for k in keys}
+            for model in _base._MODELS
+            for sub in ([r for r in ai if r.get("model") == model],)
+            if sub
+        }
+        g1 = {
+            k: {
+                "per_model": {m: v[k] for m, v in per_model.items()},
+                "direction_consistent": len({v[k] > 0.5 for v in per_model.values()}) == 1,
+                "max_abs_delta": round(max(abs(v[k] - 0.5) for v in per_model.values()), 3),
+            }
+            for k in keys
+        }
+        route = {
+            "human": _route_dist(human),
+            "ai_coached": _route_dist(ai),
+        }
+        bare = _load("ai_bare.json")
+        if bare:
+            route["ai_bare"] = _route_dist(bare)
+            route["auc_bare_opus"] = {
+                k: auc(_values(bare, k), _values(human, k)) for k in keys
+            }
+        route["separation"] = {
+            arm: round(d["heavy"] - route["human"]["heavy"]
+                       + route["human"]["light"] - d["light"], 2)
+            for arm, d in route.items()
+            if arm.startswith("ai_") and isinstance(d, dict) and "heavy" in d
+        }
+        consistent = [k for k, v in g1.items() if v["direction_consistent"]]
         cell = {
             "status": "판별 가능" if strong else "**판별 실패**",
             "captured_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -247,9 +322,19 @@ def main(argv: list[str] | None = None) -> int:
             ),
             "excerpt_words": _EXCERPT_WORDS,
             "auc": aucs,
+            "g1_per_model": g1,
             "human_stats": _summary(human),
             "ai_stats": _summary(ai),
             "models": list(_base._MODELS),
+            "router": route,
+            "finding": (
+                f"묶은 AUC 는 전부 |0.5차| < 0.20 (최대 "
+                f"{max(abs(v - 0.5) for v in aucs.values()):.3f}). "
+                f"모델 방향이 일치하는 지표는 {len(consistent)}/{len(keys)}개"
+                f"({', '.join(consistent)}) 뿐이고, 초록 셀의 최강 신호였던 "
+                f"쉼표 계열·EN-2 는 모델마다 방향이 갈린다 — 이 장르에서는 AI 티가 "
+                f"아니라 모델 개인어다."
+            ),
             "purpose": (
                 "1회차 blog 셀(HN 댓글)의 음성 결과가 장르 탓인지 레지스터 탓인지 "
                 "가른다. 다듬어진 에세이로 인간 쪽만 바꾸고 나머지는 동일하게 유지했다."

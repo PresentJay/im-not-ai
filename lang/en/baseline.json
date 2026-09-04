@@ -265,7 +265,182 @@
    },
    "finding": "**어떤 지표도 |0.5차| 0.20 을 넘지 못했다**(최대 0.192). abstract 셀에서 0.737 이던 EN-1 이 여기선 0.484 로 무작위다. 코칭 프롬프트/맨 프롬프트 양쪽 모두 같은 결과 — 프롬프트 탓이 아니다.",
    "implication": "영어 규칙과 임계는 **학술 초록 장르에 한해 검증됐다.** 비형식 논증 산문(블로그·댓글)에는 검증된 지표가 없다. 주 사용처가 그쪽이라면 현재 라우터는 근거 없이 도는 셈이다.",
-   "caveat": "HN 댓글은 대화체·단편적이고 인용/코드가 섞인다. 다듬어진 칼럼·블로그 에세이와는 다른 레지스터라, 이 음성 결과가 그쪽까지 확장되는지는 미검증."
+   "caveat": "HN 댓글은 대화체·단편적이고 인용/코드가 섞인다. 다듬어진 칼럼·블로그 에세이와는 다른 레지스터라, 이 음성 결과가 그쪽까지 확장되는지는 미검증.",
+   "followup": "2026-09-04 blog_essay 셀에서 이 caveat 을 검증했다. **레지스터가 원인이 아니었다** — 다듬어진 다저자 장문 에세이(LessWrong 2016~2021)로 인간 쪽만 바꿔도 판별 실패가 재현된다."
+  },
+  "blog_essay": {
+   "status": "**판별 실패**",
+   "captured_at": "2026-09-04T06:58:06+00:00",
+   "human_n": 42,
+   "ai_n": 42,
+   "source_human": "LessWrong 장문 에세이 2016~2021, 연도별 분산, 인용·코드 블록 제거 후 첫 300단어, 다저자",
+   "excerpt_words": 300,
+   "auc": {
+    "sentence_length_dispersion": 0.312,
+    "comma_inclusion_rate": 0.338,
+    "comma_usage_rate": 0.485,
+    "comma_segment_length": 0.376,
+    "en1_participial": 0.611,
+    "en2_be_verbs": 0.44
+   },
+   "g1_per_model": {
+    "sentence_length_dispersion": {
+     "per_model": {
+      "claude-opus-5": 0.399,
+      "claude-sonnet-5": 0.466,
+      "claude-haiku-4-5-20251001": 0.071
+     },
+     "direction_consistent": true,
+     "max_abs_delta": 0.429
+    },
+    "comma_inclusion_rate": {
+     "per_model": {
+      "claude-opus-5": 0.18,
+      "claude-sonnet-5": 0.543,
+      "claude-haiku-4-5-20251001": 0.292
+     },
+     "direction_consistent": false,
+     "max_abs_delta": 0.32
+    },
+    "comma_usage_rate": {
+     "per_model": {
+      "claude-opus-5": 0.349,
+      "claude-sonnet-5": 0.724,
+      "claude-haiku-4-5-20251001": 0.382
+     },
+     "direction_consistent": false,
+     "max_abs_delta": 0.224
+    },
+    "comma_segment_length": {
+     "per_model": {
+      "claude-opus-5": 0.446,
+      "claude-sonnet-5": 0.394,
+      "claude-haiku-4-5-20251001": 0.29
+     },
+     "direction_consistent": true,
+     "max_abs_delta": 0.21
+    },
+    "en1_participial": {
+     "per_model": {
+      "claude-opus-5": 0.525,
+      "claude-sonnet-5": 0.624,
+      "claude-haiku-4-5-20251001": 0.685
+     },
+     "direction_consistent": true,
+     "max_abs_delta": 0.185
+    },
+    "en2_be_verbs": {
+     "per_model": {
+      "claude-opus-5": 0.736,
+      "claude-sonnet-5": 0.422,
+      "claude-haiku-4-5-20251001": 0.162
+     },
+     "direction_consistent": false,
+     "max_abs_delta": 0.338
+    }
+   },
+   "human_stats": {
+    "n": 42,
+    "sentence_length_dispersion": {
+     "median": 9.78,
+     "mean": 10.75,
+     "sd": 3.41
+    },
+    "comma_inclusion_rate": {
+     "median": 55.0,
+     "mean": 55.42,
+     "sd": 14.19
+    },
+    "comma_usage_rate": {
+     "median": 0.81,
+     "mean": 0.9,
+     "sd": 0.4
+    },
+    "comma_segment_length": {
+     "median": 8.8,
+     "mean": 9.22,
+     "sd": 2.0
+    },
+    "en1_participial": {
+     "median": 0.0,
+     "mean": 1.59,
+     "sd": 2.54
+    },
+    "en2_be_verbs": {
+     "median": 30.0,
+     "mean": 29.36,
+     "sd": 10.89
+    }
+   },
+   "ai_stats": {
+    "n": 42,
+    "sentence_length_dispersion": {
+     "median": 8.59,
+     "mean": 8.48,
+     "sd": 2.09
+    },
+    "comma_inclusion_rate": {
+     "median": 45.0,
+     "mean": 48.4,
+     "sd": 12.19
+    },
+    "comma_usage_rate": {
+     "median": 0.83,
+     "mean": 0.85,
+     "sd": 0.28
+    },
+    "comma_segment_length": {
+     "median": 8.22,
+     "mean": 8.36,
+     "sd": 1.24
+    },
+    "en1_participial": {
+     "median": 3.33,
+     "mean": 3.33,
+     "sd": 4.24
+    },
+    "en2_be_verbs": {
+     "median": 28.34,
+     "mean": 26.59,
+     "sd": 12.99
+    }
+   },
+   "models": [
+    "claude-opus-5",
+    "claude-sonnet-5",
+    "claude-haiku-4-5-20251001"
+   ],
+   "router": {
+    "human": {
+     "light": 0.12,
+     "standard": 0.62,
+     "heavy": 0.26
+    },
+    "ai_coached": {
+     "light": 0.0,
+     "standard": 0.55,
+     "heavy": 0.45
+    },
+    "ai_bare": {
+     "light": 0.14,
+     "standard": 0.86,
+     "heavy": 0.0
+    },
+    "auc_bare_opus": {
+     "sentence_length_dispersion": 0.456,
+     "comma_inclusion_rate": 0.142,
+     "comma_usage_rate": 0.241,
+     "comma_segment_length": 0.499,
+     "en1_participial": 0.355,
+     "en2_be_verbs": 0.65
+    },
+    "separation": {
+     "ai_coached": 0.31,
+     "ai_bare": -0.28
+    }
+   },
+   "finding": "묶은 AUC 는 전부 |0.5차| < 0.20 (최대 0.188). 모델 방향이 일치하는 지표는 3/6개(sentence_length_dispersion, comma_segment_length, en1_participial) 뿐이고, 초록 셀의 최강 신호였던 쉼표 계열·EN-2 는 모델마다 방향이 갈린다 — 이 장르에서는 AI 티가 아니라 모델 개인어다.",
+   "purpose": "1회차 blog 셀(HN 댓글)의 음성 결과가 장르 탓인지 레지스터 탓인지 가른다. 다듬어진 에세이로 인간 쪽만 바꾸고 나머지는 동일하게 유지했다."
   }
  },
  "contamination_incident": {

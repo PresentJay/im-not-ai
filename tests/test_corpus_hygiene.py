@@ -99,7 +99,9 @@ class CorpusHygieneTests(unittest.TestCase):
 
     def test_stored_corpora_are_clean(self) -> None:
         """이미 저장된 코퍼스에 오염이 남아 있지 않은지."""
-        for path in glob.glob(os.path.join(_ROOT, "_workspace", "en_baseline*", "*.json")):
+        globs = ("en_baseline*", "en_blog_essay")
+        for path in [p for g in globs
+                     for p in glob.glob(os.path.join(_ROOT, "_workspace", g, "*.json"))]:
             if os.path.basename(path) == "ai.json" and "blog" not in path:
                 continue  # 원본(오염 포함)은 사고 기록용으로 보존
             with open(path, encoding="utf-8") as f:
@@ -108,6 +110,48 @@ class CorpusHygieneTests(unittest.TestCase):
             self.assertEqual(
                 bad, [], f"{os.path.basename(path)} 에 오염 {len(bad)}건 잔존"
             )
+
+
+class BlogCellHygieneTests(unittest.TestCase):
+    """블로그 셀 인간 코퍼스 — 본문에 마크업 잔재가 섞이지 않는지.
+
+    실사고(2026-09-04): `<style>` 를 안 걷어내 MathJax CSS 가 본문으로 들어갔고
+    (".mjx-chtml {display: inline-block; line-height: 0; …}") 그 두 편이 인간
+    문장길이 분산 107.78·67.30 으로 최상위를 찍었다. 문체가 아니라 스타일시트를
+    측정한 값이다.
+    """
+
+    def setUp(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "_blog", os.path.join(_ROOT, "scripts", "build_en_blog_cell.py")
+        )
+        self.m = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.m)
+
+    def test_style_block_is_stripped(self) -> None:
+        html = "<p>Real prose here.</p><style>.mjx-chtml {display: inline-block;}</style>"
+        self.assertNotIn("display", self.m._prose(html))
+
+    def test_quotes_and_code_are_stripped(self) -> None:
+        """인용·코드는 필자의 산문이 아니다 — 문체 측정에서 뺀다."""
+        html = "<p>My words.</p><blockquote>Someone else's words.</blockquote><pre>x = 1</pre>"
+        out = self.m._prose(html)
+        self.assertIn("My words", out)
+        self.assertNotIn("Someone else", out)
+        self.assertNotIn("x = 1", out)
+
+    def test_junk_survivor_is_rejected(self) -> None:
+        self.assertTrue(self.m._JUNK.search("text .mjx-chtml leftovers"))
+        self.assertFalse(self.m._JUNK.search("ordinary essay prose about display ads"))
+
+    def test_stored_human_corpus_has_no_markup(self) -> None:
+        path = os.path.join(_ROOT, "_workspace", "en_blog_essay", "human.json")
+        if not os.path.exists(path):
+            self.skipTest("코퍼스 미수집")
+        with open(path, encoding="utf-8") as f:
+            rows = json.load(f)
+        bad = [r["title"] for r in rows if self.m._JUNK.search(r["text"])]
+        self.assertEqual(bad, [], f"마크업 잔재 {len(bad)}편")
 
 
 if __name__ == "__main__":
