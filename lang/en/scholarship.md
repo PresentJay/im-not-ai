@@ -31,6 +31,29 @@
 
 ---
 
+## 커뮤니티 축 — 영어권 사용자가 실제로 거슬려 하는 것
+
+학술(서술적)만으로는 "사용자가 신경 쓰는가"를 못 잡는다. 반대로 커뮤니티만으로는
+"방향이 맞는가"를 못 잡는다. **둘을 교차**한다. 후보 전수는
+`lang/en/candidate-pool.md`.
+
+주 수집원: [blader/humanizer](https://github.com/blader/humanizer) — **41,448★**(2026-08),
+35패턴. 등급 **E3 상단**(비심사이나 집계 규모가 크다).
+
+**교차 결과가 이 프로젝트의 존재 이유를 보여준다** — 41k★ 목록의 처방 3건이
+동료심사 연구와 반대다:
+
+| blader | 그들의 처방 | 학술 |
+|---|---|---|
+| #13 passive voice | 능동태로 바꿔라 | Reinhart 2025 PNAS: LLM 의 agentless passive 는 **인간의 절반** |
+| #14 em/en dash | 최종본에 있으면 안 된다 | Gemini 3.53 · Llama 0.00 vs 인간 4.76 — **G1 미통과** |
+| #24 qualifiers | 줄여라 | Jiang & Hyland · Mizumoto · Reinhart **3연구가 LLM 의 hedge 과소 사용에 수렴** |
+
+우리 v0.1 도 같은 셋을 틀렸다(아래 「정정 기록」). 차이는 **학술 확인이 잡아냈다는 것**이다.
+
+반대로 **양축이 일치하는 항목**은 근거가 가장 단단하다 — #3 현재분사절(= EN-1)이
+41k★ 와 PNAS 양쪽에서 지목된다.
+
 ## Tier A — 규칙별 학술 앵커
 
 ### E-1. 문장 길이 분산 부족 — **유지, 처방 수정**
@@ -69,7 +92,10 @@
   `X, which reflects Y`. **내용을 추가하지 않는다.**
 - ⚠️ v0.1 룰북에 **없었다.** 최대 효과 항목을 빠뜨렸다. 한국어 대응물이 없어
   영어 고유 ID(`EN-*`)를 새로 부여한다.
-- _source_anchor: Reinhart et al. 2025 PNAS · **E2**_
+- **커뮤니티 축 일치**: blader/humanizer #3 "Shallow analysis with -ing phrases"
+  (41k★) — `highlighting`·`underscoring`·`reflecting`·`showcasing` 을 같은 이유로 지목한다.
+  **학술·커뮤니티가 모두 강한 유일한 항목**이다.
+- _source_anchor: Reinhart et al. 2025 PNAS · **E2** + blader/humanizer #3 · **E3(41k★)**_
 
 ### F-7. 범용 동사·초과 어휘 — **유지, 원자료 확인**
 
@@ -96,7 +122,11 @@
   구조 선호·병렬 구문 의존을 보고하는 것이 가장 가까운 간접 근거다.
 - ⚠️ **아이러니**: 이 프로젝트가 "영어 최강 신호"로 밀어온 항목이 영어 근거가 가장 약하다.
   한국어 E1 의 이식이지 영어 실측이 아니다.
-- _source_anchor: 한국어 `empirical-validation.md` C-8 이식 · **E3(영어 미검증)**_
+- **커뮤니티 축은 강하다**: blader #9 "Not X but Y and clipped negative endings"(41k★).
+  계량 근거는 여전히 없으나 영어권 사용자가 실제로 거슬려 한다는 증거는 있다.
+  E3 이하 단독 승격 금지는 유지하되, **C+A 결합 재평가 대상**으로 둔다.
+- _source_anchor: 한국어 `empirical-validation.md` C-8 이식 + blader/humanizer #9 ·
+  **E3 ×2(영어 계량 미검증)**_
 
 ---
 

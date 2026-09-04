@@ -162,4 +162,5 @@ python3 ${SKILL_ROOT}/core/underedit.py \
 - 영어 룰북: `${SKILL_ROOT}/lang/en/quick-rules.md` (Tier A 7 + Tier B 7)
 - 영어 렉시콘: `${SKILL_ROOT}/lang/en/lexicon.json` (Kobak 407건, 라우터용 12건)
 - **학술 근거 SSOT: `${SKILL_ROOT}/lang/en/scholarship.md`** — 규칙별 인용·등급·정정 기록
+- 후보 풀: `${SKILL_ROOT}/lang/en/candidate-pool.md` — 커뮤니티 수집 35건 + 승격 절차
 - 설계·근거: `docs/superpowers/specs/2026-09-02-multilingual-design.md`

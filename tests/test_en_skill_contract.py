@@ -25,6 +25,7 @@ REFERENCED = (
     "lang/en/quick-rules.md",
     "lang/en/lexicon.json",
     "lang/en/scholarship.md",
+    "lang/en/candidate-pool.md",
 )
 
 
