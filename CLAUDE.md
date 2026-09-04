@@ -56,6 +56,8 @@ im-not-ai/
 │   ├── metrics_universal.py       # 분산·장문율·쉼표 계열 — 산술 지표(unit: chars|tokens)
 │   ├── reinjection.py             # G3 게이트 — 윤문 전후 재측정, 원시 건수로 판정
 │   ├── underedit.py               # G4 게이트 — 지목된 티가 실제로 줄었는지 (과소윤문)
+│   ├── content_preservation.py    # 내용 보존 — 수치(주입만 FAIL)·인용·전거·제목
+│   ├── modality_loss.py           # 서법 소실 — 유보·당위가 단정이 됐는지 (문장쌍 판정)
 │   └── detect_language.py         # 유니코드 스크립트 비율 (ko|en|unknown, 판정 불가 시 ko)
 ├── lang/                          # 언어별 데이터·지표 (다국어 R2a) — 프로덕션 런타임
 │   └── en/

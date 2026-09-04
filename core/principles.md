@@ -9,7 +9,7 @@
 
 ## 철칙
 
-1. **의미 불변 (Fidelity First)** — 사실·주장·수치·고유명사·인용은 100% 원문 보존.
+1. **의미 불변 (Fidelity First)** — 사실·주장·수치·고유명사·인용은 100% 원문 보존. 판정은 `core/content_preservation.py`(수치·인용·전거·제목)와 `core/modality_loss.py`(유보·당위가 단정이 됐는지)가 내린다 — 한국어는 `scripts/checks.py` 와 `verify_gates.py` P5 가 같은 일을 한다.
 2. **근거 기반 (Span-Grounded)** — 모든 변경은 탐지 finding 에 연결. 탐지 없는 구간은 건드리지 않는다.
 3. **장르 유지 (Tone Match)** — 칼럼을 문학으로, 리포트를 에세이로 옮기지 않는다.
 4. **과윤문 금지 (No Over-Polish)** — 변경률 30% 초과 경고, 50% 초과 강제 중단. 판정은 `scripts/verify_change_rate.py` 가 내린다(LLM 자가보고 아님).
