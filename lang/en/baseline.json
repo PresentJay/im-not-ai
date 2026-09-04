@@ -188,5 +188,48 @@
     "heavy": 0.9
    }
   }
+ },
+ "genres": {
+  "abstract": {
+   "status": "판별 가능",
+   "human_n": 42,
+   "ai_n": 14,
+   "source_human": "arXiv cs.CL 2015~2020, 연도당 7편",
+   "auc": {
+    "comma_usage_rate": 0.862,
+    "en1_participial": 0.737,
+    "comma_inclusion_rate": 0.679,
+    "sentence_length_dispersion": 0.321,
+    "en2_be_verbs": 0.221,
+    "comma_segment_length": 0.18
+   }
+  },
+  "blog": {
+   "status": "**판별 실패**",
+   "human_n": 48,
+   "ai_n": 20,
+   "source_human": "Hacker News 댓글 2016~2021, 연도당 8편, 150단어 이상, 다저자",
+   "auc": {
+    "comma_segment_length": 0.308,
+    "sentence_length_dispersion": 0.356,
+    "comma_inclusion_rate": 0.533,
+    "comma_usage_rate": 0.507,
+    "en2_be_verbs": 0.457,
+    "en1_participial": 0.484
+   },
+   "finding": "**어떤 지표도 |0.5차| 0.20 을 넘지 못했다**(최대 0.192). abstract 셀에서 0.737 이던 EN-1 이 여기선 0.484 로 무작위다. 코칭 프롬프트/맨 프롬프트 양쪽 모두 같은 결과 — 프롬프트 탓이 아니다.",
+   "implication": "영어 규칙과 임계는 **학술 초록 장르에 한해 검증됐다.** 비형식 논증 산문(블로그·댓글)에는 검증된 지표가 없다. 주 사용처가 그쪽이라면 현재 라우터는 근거 없이 도는 셈이다.",
+   "caveat": "HN 댓글은 대화체·단편적이고 인용/코드가 섞인다. 다듬어진 칼럼·블로그 에세이와는 다른 레지스터라, 이 음성 결과가 그쪽까지 확장되는지는 미검증."
+  }
+ },
+ "contamination_incident": {
+  "date": "2026-09-03",
+  "what": "AI 코퍼스 생성을 `claude -p` 로 하면서 **저장소 작업 디렉터리 안에서 실행**했다. CLI 가 프로젝트 컨텍스트와 plan mode 상태를 물어, 모델이 요청한 텍스트 대신 자기 도구에 대한 메타 발화를 냈다.",
+  "scale": {
+   "arxiv_ai": "7/21 (33%) — sonnet 7편 전부",
+   "blog_ai": "13/38 (34%)"
+  },
+  "impact": "정제 후 재측정 결과 **결론은 유지**됐다 — AUC 변화가 전부 ±0.06 이내이고 부호가 뒤집힌 항목이 없다(EN-1 0.726→0.737, comma_usage 0.888→0.862). 다만 **sonnet 이 abstract 셀에서 통째로 빠져 G1(전 모델 생존)을 더 이상 주장할 수 없다.**",
+  "fix": "생성은 저장소 밖 디렉터리에서 실행한다. 생성물은 메타 발화 정규식으로 선별한다."
  }
 }
