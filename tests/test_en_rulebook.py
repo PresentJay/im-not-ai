@@ -15,10 +15,12 @@ _ROOT = os.path.abspath(os.path.join(_HERE, ".."))
 _RULEBOOK = os.path.join(_ROOT, "lang", "en", "quick-rules.md")
 
 # EN-* 는 한국어 대응물이 없는 영어 고유 규칙이다.
-TIER_A = ("C-8", "F-7", "E-1", "F-4", "EN-1")
+# 실물 기준(2026-09-03). E-1 은 G1 미통과로 제외됨.
+TIER_A = ("C-8", "F-7", "F-4", "EN-1", "EN-2", "C-12b", "C-12", "E-5")
 TIER_B = ("C-1", "C-2", "C-3", "C-5", "C-6", "C-9", "C-10")
 # A-9·G-1·G-2 는 v0.2 에서 철회·반전됐다 — 규칙 표에 있으면 안 된다.
-EXCLUDED = ("J-3", "H-1", "H-3", "G-3", "D-4", "A-9", "G-1", "G-2")
+# E-1 은 2026-09-03 G1 미통과로 강등(opus 0.59 vs haiku 0.05 — 방향이 갈린다).
+EXCLUDED = ("J-3", "H-1", "H-3", "G-3", "D-4", "A-9", "G-1", "G-2", "E-1")
 
 _RULE_ROW = re.compile(r"^\|\s*\*\*([A-Z]{1,2}-\d+)\*\*")
 
@@ -44,7 +46,11 @@ class EnRulebookTests(unittest.TestCase):
             self.assertIn(rid, self.ids, f"Tier B 규칙 누락: {rid}")
 
     def test_excluded_rules_absent(self) -> None:
-        """G1 미통과·근거 흔들림 항목은 규칙 표에 있으면 안 된다."""
+        """G1 미통과·근거 흔들림 항목은 **규칙 표**에 있으면 안 된다.
+
+        `_RULE_ROW` 는 `| **ID** |` 형태만 잡으므로, 제외 표의
+        `| **E-1 문장길이 분산** |` 같은 서술형 행은 여기 안 걸린다.
+        """
         for rid in EXCLUDED:
             self.assertNotIn(
                 rid, self.ids, f"{rid} 는 규칙에서 제외돼야 한다(근거 미달)"
@@ -56,11 +62,11 @@ class EnRulebookTests(unittest.TestCase):
         for feat in ("hedges", "agentless passive", "contraction"):
             self.assertIn(feat, self.text, f"보호 대상 누락: {feat}")
 
-    def test_e1_prescribes_short_not_long(self) -> None:
-        """영어 LLM 문장은 이미 길다 — 장문 추가는 반대 방향."""
-        e1 = [r for r in self.rows if _RULE_ROW.match(r).group(1) == "E-1"]
-        self.assertTrue(e1)
-        self.assertIn("짧은 문장", e1[0])
+    def test_dispersion_demoted_with_g1_evidence(self) -> None:
+        """E-1 분산은 G1 미통과 — 규칙 표에 없고, 제외 사유가 기록돼야 한다."""
+        self.assertNotIn("E-1", self.ids, "E-1 이 규칙 표에 남아 있다")
+        self.assertIn("G1 미통과", self.text)
+        self.assertRegex(self.text, r"opus 0\.59|opus 는 인간보다 분산이")
 
     def test_links_scholarship(self) -> None:
         self.assertIn("scholarship.md", self.text)

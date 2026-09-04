@@ -193,16 +193,62 @@
   "abstract": {
    "status": "판별 가능",
    "human_n": 42,
-   "ai_n": 14,
+   "ai_n": 21,
    "source_human": "arXiv cs.CL 2015~2020, 연도당 7편",
    "auc": {
-    "comma_usage_rate": 0.862,
-    "en1_participial": 0.737,
-    "comma_inclusion_rate": 0.679,
-    "sentence_length_dispersion": 0.321,
-    "en2_be_verbs": 0.221,
-    "comma_segment_length": 0.18
-   }
+    "comma_usage_rate": 0.891,
+    "en1_participial": 0.787,
+    "comma_inclusion_rate": 0.759,
+    "comma_segment_length": 0.167,
+    "en2_be_verbs": 0.196,
+    "sentence_length_dispersion": 0.296
+   },
+   "models": [
+    "opus",
+    "sonnet",
+    "haiku"
+   ],
+   "note": "오염 정제 + sonnet 재생성으로 21편 복구(모델당 7편). G1 판정 가능.",
+   "g1_per_model_auc": {
+    "comma_usage_rate": {
+     "haiku": 0.81,
+     "opus": 0.91,
+     "sonnet": 0.95,
+     "pass": true
+    },
+    "comma_segment_length": {
+     "haiku": 0.16,
+     "opus": 0.2,
+     "sonnet": 0.14,
+     "pass": true
+    },
+    "en2_be_verbs": {
+     "haiku": 0.07,
+     "opus": 0.37,
+     "sonnet": 0.15,
+     "pass": true
+    },
+    "en1_participial": {
+     "haiku": 0.87,
+     "opus": 0.6,
+     "sonnet": 0.89,
+     "pass": true
+    },
+    "comma_inclusion_rate": {
+     "haiku": 0.64,
+     "opus": 0.72,
+     "sonnet": 0.92,
+     "pass": true
+    },
+    "sentence_length_dispersion": {
+     "haiku": 0.05,
+     "opus": 0.59,
+     "sonnet": 0.24,
+     "pass": false,
+     "why": "opus 는 인간보다 분산이 높고(0.59) haiku 는 낮다(0.05) — 방향이 갈린다. 모델 개인어."
+    }
+   },
+   "g1_verdict": "6지표 중 5개 통과. **분산은 미통과** — 한국어 H-1(haiku 단독)·영어 em dash(Gemini·Llama)에 이어 G1 이 세 번째로 잡은 모델 개인어다. 관측 전용으로 강등한다."
   },
   "blog": {
    "status": "**판별 실패**",

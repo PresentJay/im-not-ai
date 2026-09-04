@@ -29,6 +29,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import urllib.request
 from datetime import datetime, timezone
 
@@ -44,6 +45,7 @@ _OUT = os.path.join(_ROOT, "lang", "en", "baseline.json")
 # ChatGPT 공개(2022-11) 이전으로 창을 못박는다. 여유를 둬 2021 말까지만 쓴다.
 _DATE_WINDOW = "[201501010000+TO+202112310000]"
 _MODELS = ("claude-opus-5", "claude-sonnet-5", "claude-haiku-4-5-20251001")
+_GEN_MAX_TRIES = 4   # 오염이 비결정적이라 재시도로 채운다
 
 _TAG = re.compile(r"<(title|summary|published)>(.*?)</\1>", re.S)
 
@@ -90,24 +92,98 @@ def fetch_human(n: int) -> list[dict]:
     return got[:n]
 
 
+# 생성물이 요청한 글이 아니라 **모델의 메타 발화**인 경우를 걸러낸다.
+# 실사고(2026-09-03): 저장소 안에서 `claude -p` 를 돌렸더니 CLI 가 프로젝트
+# 컨텍스트·plan mode 상태를 물어, 초록 대신 "this isn't a coding task, plan mode
+# doesn't apply…" 를 냈다. arXiv AI 7/21(sonnet 전부)·blog AI 13/38 이 오염됐다.
+# 문서 주의사항으로는 못 막는다 — 코드가 거른다.
+# ⚠️ 넓게 잡으면 사람 글을 거른다. 초판에 넣은 `I can't` 가 HN 인간 댓글
+# ("...that I accepted the job...despite I can't...")을 오탐했다. 실제 오염 사례에는
+# 그 표현이 없었다 — **도구·과업 프레이밍 어휘만** 남긴다.
+_META_RE = re.compile(
+    r"\b(?:plan mode|planning-mode|Explore agents?|Plan agents?"
+    r"|this (?:request|task) (?:is|isn'?t|seems)"
+    r"|isn'?t a (?:coding|planning) task|not a coding/planning task"
+    r"|codebase|as an AI|Here'?s (?:a|the) (?:comment|abstract))\b",
+    re.I,
+)
+
+
+def is_contaminated(text: str) -> bool:
+    """앞부분에 메타 발화가 있으면 코퍼스에 넣지 않는다."""
+    return bool(_META_RE.search(text[:400]))
+
+
+# 센티넬 — 1차 방어. 한국어 `tests/humanize_runner.py` 가 이미 쓰는 방식이고,
+# 영어 생성기가 그걸 안 가져와서 오염이 조용히 통과했다. 모델이 요청한 글 대신
+# 메타 발화를 하면 마커가 없으므로 즉시 거부된다. `is_contaminated` 는 2차 방어다
+# (마커 안에까지 메타 발화를 넣는 경우).
+_START, _END = "<<<A>>>", "<<</A>>>"
+_SENTINEL_RE = re.compile(re.escape(_START) + r"(.*?)" + re.escape(_END), re.S)
+
+
+def extract_sentinel(stdout: str) -> str | None:
+    """센티넬 사이 본문만 꺼낸다. 마커가 없으면 None(거부)."""
+    match = _SENTINEL_RE.search(stdout)
+    return " ".join(match.group(1).split()) if match else None
+
+
 def gen_ai(titles: list[str]) -> list[dict]:
-    """같은 제목으로 초록을 생성한다 — G2 과업 통제."""
+    """같은 제목으로 초록을 생성한다 — G2 과업 통제.
+
+    **저장소 밖에서 실행한다.** cwd 가 저장소면 CLI 가 프로젝트 컨텍스트를 물어
+    모델이 메타 발화를 낸다(위 _META_RE 주석의 실사고).
+    """
     claude = _which_claude()
+    workdir = tempfile.mkdtemp(prefix="humanize_gen_")
     out: list[dict] = []
+    rejected = 0
     for title in titles:
         for model in _MODELS:
             prompt = (
                 "Write the abstract for a computational linguistics paper titled "
-                f'"{title}". 150-200 words. Output only the abstract text.'
+                f'"{title}". 150-200 words. Output the abstract text between '
+                f"{_START} and {_END} and nothing else."
             )
-            p = subprocess.run(
-                [claude, "--model", model, "-p", prompt],
-                capture_output=True, text=True, timeout=300,
-            )
-            text = " ".join(p.stdout.split())
-            if len(text.split()) >= 100:
-                out.append({"title": title, "text": text, "model": model})
+            # 오염은 비결정적이다 — 환경 격리로 크게 줄지만 완전히는 안 막힌다
+            # (실측: sonnet 격리 전 1/7 → 격리 후 4/7 정상). 재시도로 채운다.
+            # 셀마다 표본 수가 같아야 모델 간 비교가 성립하므로 빈칸을 두지 않는다.
+            for _ in range(_GEN_MAX_TRIES):
+                proc = subprocess.run(
+                    [claude, "--model", model, "-p", prompt],
+                    capture_output=True, text=True, timeout=300,
+                    cwd=workdir, env=_clean_env(),
+                )
+                text = extract_sentinel(proc.stdout)
+                if text and len(text.split()) >= 100 and not is_contaminated(text):
+                    out.append({"title": title, "text": text, "model": model})
+                    break
+                rejected += 1
+            else:
+                print(f"포기: {model} / {title[:40]}", file=sys.stderr)
+    if rejected:
+        print(f"거부 {rejected}건 (분량 미달 또는 메타 발화, 재시도 포함)",
+              file=sys.stderr)
     return out
+
+
+# 부모 Claude Code 세션의 상태가 자식 `claude -p` 로 새면, 모델이 요청한 글 대신
+# 자기 도구에 대한 메타 발화를 낸다("plan mode doesn't apply here…").
+# 실측(2026-09-03): 이 넷을 지우면 즉시 정상 산출이 나온다. cwd 격리만으로는
+# 부족했다 — sonnet 이 저장소 밖에서도 6/7 오염이었다.
+_LEAKY_ENV = (
+    "CLAUDE_CODE_MESSAGING_SOCKET",
+    "CLAUDE_CODE_MESSAGING_TOKEN",
+    "CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS",
+    "CLAUDE_CODE_ENABLE_TASKS",
+)
+
+
+def _clean_env() -> dict:
+    env = dict(os.environ)
+    for key in _LEAKY_ENV:
+        env.pop(key, None)
+    return env
 
 
 def _which_claude() -> str:

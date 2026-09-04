@@ -86,8 +86,10 @@ SKILL_ROOT="$(d="$(cd -P "${CLAUDE_SKILL_DIR}" && pwd)"; \
 
 1. `Read` 로 `01_input_with_metrics.txt` + `${SKILL_ROOT}/lang/en/quick-rules.md`.
 2. `00_metrics.json` 의 `route_signals` 를 겨냥에 쓴다:
-   - `dispersion` 이 낮으면 → E-1 우선. **짧은 문장을 넣어 올린다** — 장문 추가는
-     반대 방향이다(LLM 문장은 이미 인간보다 길다). **대시로 잇지 말 것.**
+   - `en1_participial_per_1k` 가 높으면 → **EN-1 우선**(분사절을 절·독립문으로).
+     룰북 최강 근거(AUC 0.787, 전 모델 일치, E1+E2+E3).
+   - `en2_be_verb_per_1k` 가 낮으면 → **EN-2**(무거운 동사·명사구를 be동사로).
+   - ⚠️ `dispersion` 은 **G1 미통과**다(opus 는 인간보다 높다). 겨냥에 쓰지 않는다.
    - `lexicon.by_family` 에 `F-7` 이 있으면 → 범용 동사 교체 우선.
    - `comma_inclusion_rate` 가 높으면 → 쉼표 분절 정리.
 3. Tier A 우선, Tier B 는 서식 문제가 실재할 때만.
