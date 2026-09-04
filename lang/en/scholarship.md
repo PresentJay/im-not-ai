@@ -95,7 +95,25 @@
 - **커뮤니티 축 일치**: blader/humanizer #3 "Shallow analysis with -ing phrases"
   (41k★) — `highlighting`·`underscoring`·`reflecting`·`showcasing` 을 같은 이유로 지목한다.
   **학술·커뮤니티가 모두 강한 유일한 항목**이다.
-- _source_anchor: Reinhart et al. 2025 PNAS · **E2** + blader/humanizer #3 · **E3(41k★)**_
+- **자체 실측(E1)**: arXiv 대조군에서 AUC **0.726** — 인간 42편의 **중앙값 0.00**
+  (절반 이상이 0건) vs AI 10.26/1k. **E1+E2+E3 삼중 근거로 룰북 최강 항목이다.**
+- ⚠️ **탐지는 프레임으로 한다.** 초판 정규식이 동사 목록(`highlight`·`underscor`·
+  `reflect`…)이었고 인간·AI 모두 0.00 이 나왔다 — 그 목록은 블로그 장르의 분사이고
+  학술 초록은 `spanning`·`suggesting`·`showing` 을 쓴다. 프레임(`, VERB-ing`)으로
+  바꾸자 0.605 → 0.726. C-8 에 이어 같은 실패를 반복했다.
+- _source_anchor: Reinhart et al. 2025 PNAS · **E2** + blader/humanizer #3 · **E3(41k★)**
+  + 자체 실측 · **E1**_
+
+### EN-2. be동사 회피 — **신규, 자체 실측 승격**
+
+- **AI 는 `is/are/was/were` 를 인간의 절반만 쓴다** — 자체 실측 인간 19.31 vs AI
+  10.15/1k, AUC 0.238(|0.5차| 0.262).
+- 대신 무거운 동사·명사구가 들어간다: `X constitutes a violation` · `Y represents an
+  improvement`. **F-4 명사화와 같은 현상의 다른 측면**이고 편집도 같다 —
+  `X is a violation` 으로 되돌린다.
+- 결핍 신호지만 **처방 가능하다**. 없는 내용을 만드는 게 아니라 이미 있는 구문을
+  단순화하는 편집이기 때문이다(`core/principles.md` 결핍 신호 정책의 예외 조건).
+- _source_anchor: 자체 실측(arXiv 대조군) · **E1** + blader/humanizer #8 · **E3(41k★)**_
 
 ### F-7. 범용 동사·초과 어휘 — **유지, 원자료 확인**
 

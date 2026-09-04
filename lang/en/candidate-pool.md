@@ -55,18 +55,46 @@
 
 ---
 
+## 심사 1회차 결과 (2026-09-03) — `scripts/screen_en_candidates.py`
+
+기존 arXiv 대조군(인간 42 · AI 21, 같은 제목)으로 정규식 계측 가능한 11건을 심사했다.
+**신규 수집 0** — 이미 있는 코퍼스를 다시 잰 것뿐이다.
+
+| 후보 | 인간 | AI | AUC | 판정 |
+|---|---|---|---|---|
+| **EN-1** 현재분사절(`, VERB-ing`) | 0.00 | 10.26 | **0.726** | **승격** — 인간 절반 이상이 0건 |
+| **#8** be동사 회피 | 19.31 | 10.15 | **0.238** | **승격 → EN-2.** AI 가 절반만 쓴다 |
+| #26 hyphenated pairs | 22.66 | 22.83 | 0.562 | 기각 |
+| #11 repeated openings | 19.09 | 22.22 | 0.507 | 기각 |
+| #5 · #12 · #23 · #25 · #27 · #31 · #32 | 0.00 | 0.00 | ~0.50 | **판정 불가(장르)** |
+
+**판정 불가 7건이 중요하다.** 인간·AI 모두 0.00 이라는 건 패턴이 없다는 게 아니라
+**학술 초록에 그 장르의 패턴이 없다**는 뜻이다 — filler·formulaic saying·generic
+positive ending 은 블로그·마케팅 산문의 것이다. 기각이 아니라 **칼럼 코퍼스가
+생기면 재심사**한다. 이게 칼럼 셀이 필요한 가장 구체적인 이유다.
+
+### ⚠️ 심사가 잡아낸 우리 오류 (3번째 같은 실패)
+
+EN-1 초판 정규식이 **인간·AI 모두 0.00** 이었다. 동사 목록
+(`highlight`·`underscor`·`reflect`…)을 박았는데 그건 **블로그 장르의 분사**이고,
+학술 초록은 `spanning`·`suggesting`·`showing`·`tracking` 을 쓴다.
+**통사 프레임(`, VERB-ing`)으로 바꾸자 AUC 0.605 → 0.726.**
+
+C-8 첫 정규식(재현율 0/6), 렉시콘 전수 오발화에 이어 **세 번째로 같은 실패**다:
+표면 예시를 인코딩하고 프레임을 놓쳤다. 영어 규칙을 쓸 때의 상시 위험으로 기록한다.
+
 ## 후보 전수 (35건) — 우리 상태 대조
 
 | # | blader 패턴 | 우리 상태 |
 |---|---|---|
 | 1 | Inflated claims about importance and legacy | 후보 — ko D-2(의의 과장) 대응 |
 | 2 | Name-dropping to prove importance | 후보 — ko 대응 없음, **영어 고유** |
-| 3 | Shallow analysis with -ing phrases | **EN-1 채택** (C+A 최강) |
+| 3 | Shallow analysis with -ing phrases | **EN-1 채택** — E1+E2+E3 삼중, 룰북 최강 |
 | 4 | Sales language | 후보 — ko D-4(hype) 대응 |
 | 5 | Vague sources (`studies show`·`experts say`) | 후보 — ko **I-7 무주체 판정** 대응 |
 | 6 | Formulaic challenges and outlook sections | 후보 — ko **D-12**. EN↔KO **양방향 생존 유일** |
 | 7 | Overused AI words | **F-7 채택** |
-| 8 | Avoiding is and are | 후보 — **영어 고유**, 미검증 |
+| 8 | Avoiding is and are | **EN-2 채택** — 자체 실측 AUC 0.238(AI 가 절반만 씀) |
 | 9 | Not X but Y and clipped negative endings | **C-8 채택** (등급 재고 대상) |
 | 10 | Forced groups of three (tricolon) | 후보 — ko C-1(기계적 병렬) 인접 |
 | 11 | Changing names and repeating sentence openings | 후보 — **영어 고유**. E-1 분산의 어휘판 |
@@ -97,10 +125,10 @@
 
 ## 집계
 
-- **채택 완료**: 4 (#3 · #7 · #9 · #18)
+- **채택 완료**: 5 (#3=EN-1 · #7 · #8=EN-2 · #9 · #18)
 - **채택 거부 (학술 반대)**: 3 (#13 · #14 · #24)
-- **후보 대기**: 28
-- 그중 **영어 고유**(한국어 대응 없음): 7 (#2 · #8 · #11 · #17 · #19 · #22 · #26)
+- **후보 대기**: 27 — 그중 **7건은 장르 탓 판정 불가**(칼럼 코퍼스 대기)
+- 영어 고유(한국어 대응 없음): 6 (#2 · #11 · #17 · #19 · #22 · #26) — #8 은 채택됨
 
 ## 승격 절차
 
