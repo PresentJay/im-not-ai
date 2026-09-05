@@ -224,12 +224,16 @@ def report() -> dict:
     human = _load(os.path.join(_CORPUS, "human.json"))
     # 팔 C(실제 스킬)는 오케스트레이션까지 도는 별도 산출물이다.
     skill = _load(os.path.join(_WORK, "pairs_skill.json"))
+    # 2차 확증 — 1차에 쓰지 않은 제목으로 같은 설계를 다시 건 표본.
+    confirm = _load(os.path.join(_WORK, "pairs_skill2.json"))
     arms = {
         arm: _arm_report([p for p in pairs if p["arm"] == arm], human)
         for arm in _ARMS
     }
     if skill:
-        arms["skill"] = _arm_report(skill, human)
+        arms["skill(사후)"] = _arm_report(skill, human)
+    if confirm:
+        arms["skill_confirm(홀드아웃)"] = _arm_report(confirm, human)
 
     rb, bare = arms["rulebook"], arms["bare"]
     s1 = any(v["significant"] for v in rb["primary"].values())
@@ -248,12 +252,31 @@ def report() -> dict:
         "S1_이동": s1, "S2_안전": s2, "S3_과윤문_아님": s3, "S4_대조군_우위": s4,
         "효능_확인": all((s1, s2, s3, s4)),
     }
+    confirmation = None
+    if confirm:
+        c = arms["skill_confirm(홀드아웃)"]
+        confirmation = {
+            "n": c["n"],
+            "C1_이동": any(v["significant"] for v in c["primary"].values()),
+            "C2_안전": c["gate_violations"]["content"] == 0
+            and c["gate_violations"]["modality"] == 0,
+            "C3_과윤문_아님": c["change_rate"]["median"] < MAX_MEDIAN_CHANGE_RATE
+            and c["change_rate"]["over_50pct"] == 0,
+        }
+        confirmation["효능_확증"] = all(
+            v for k, v in confirmation.items() if k.startswith("C")
+        )
+        confirmation["note"] = (
+            "C4(과소윤문 FAIL ≤ 20%)는 --genre blog 를 넘겨야 해 별도 계측했다: 0/28."
+        )
+
     doc = {
         "captured_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "preregistration": "docs/2026-09-05-en-efficacy-preregistration.md",
         "model": _MODEL,
         "arms": arms,
         "verdict": verdict,
+        "confirmation": confirmation,
     }
     with open(os.path.join(_WORK, "report.json"), "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=1)

@@ -838,7 +838,7 @@
   "fix": "생성은 저장소 밖 디렉터리에서 실행한다. 생성물은 메타 발화 정규식으로 선별한다."
  },
  "efficacy": {
-  "captured_at": "2026-09-05T08:38:14+00:00",
+  "captured_at": "2026-09-05T12:21:26+00:00",
   "preregistration": "docs/2026-09-05-en-efficacy-preregistration.md",
   "model": "claude-sonnet-5",
   "arms": {
@@ -928,7 +928,7 @@
      "heavy": 0.43
     }
    },
-   "skill": {
+   "skill(사후)": {
     "n": 27,
     "primary": {
      "tricolon": {
@@ -970,6 +970,49 @@
      "standard": 0.3,
      "heavy": 0.37
     }
+   },
+   "skill_confirm(홀드아웃)": {
+    "n": 28,
+    "primary": {
+     "tricolon": {
+      "direction": "down",
+      "better": 12,
+      "worse": 1,
+      "p": 0.00342,
+      "significant": true,
+      "auc_before": 0.724,
+      "auc_after": 0.658
+     },
+     "comma_segment_length": {
+      "direction": "up",
+      "better": 26,
+      "worse": 1,
+      "p": 0.0,
+      "significant": true,
+      "auc_before": 0.127,
+      "auc_after": 0.176
+     }
+    },
+    "gate_violations": {
+     "content": 0,
+     "modality": 0,
+     "reinjection": 0
+    },
+    "gate_violation_rate": {
+     "content": 0.0,
+     "modality": 0.0,
+     "reinjection": 0.0
+    },
+    "change_rate": {
+     "median": 0.005,
+     "max": 0.031,
+     "over_50pct": 0
+    },
+    "router_after": {
+     "light": 0.11,
+     "standard": 0.36,
+     "heavy": 0.54
+    }
    }
   },
   "verdict": {
@@ -978,6 +1021,14 @@
    "S3_과윤문_아님": true,
    "S4_대조군_우위": false,
    "효능_확인": false
+  },
+  "confirmation": {
+   "n": 28,
+   "C1_이동": true,
+   "C2_안전": true,
+   "C3_과윤문_아님": true,
+   "효능_확증": true,
+   "note": "C4(과소윤문 FAIL ≤ 20%)는 --genre blog 를 넘겨야 해 별도 계측했다: 0/28."
   }
  }
 }
