@@ -21,6 +21,7 @@ LLMs write Korean that *reads* like translated English. Native speakers spot it 
 | [`docs/en/taxonomy.md`](docs/en/taxonomy.md) | All 71 patterns: severity, trigger, prescription, genre guards, detector schema |
 | [`docs/en/evidence.md`](docs/en/evidence.md) | The corpus study — what was confirmed, what was **rejected**, and the limits of the design |
 | [`docs/en/integration.md`](docs/en/integration.md) | Building this into a model or product, and the failure modes we hit in production |
+| [English support](#english-support-humanize-english-v02) | **Writing in English?** `humanize-english` v0.2 ships in the same package — re-measured against English corpora, not translated from Korean |
 
 Engineers integrating this should start with `integration.md`.
 

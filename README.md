@@ -208,7 +208,7 @@ Claude Code에서는 세 가지 방법 중 편한 쪽으로 사용합니다. Git
 /plugin install humanize-korean@im-not-ai
 ```
 
-스킬 3개 + 서브에이전트 9개가 함께 설치됩니다. 자세한 옵션·스크립트 설치는 [설치](#설치-install) 섹션과 [`INSTALL.md`](INSTALL.md) 참고. (초기 패키징을 탐색한 [`gaebalai/im-not-ai`](https://github.com/gaebalai/im-not-ai) 포크도 있습니다.)
+스킬 4개(한국어 3 + `humanize-english`) + 서브에이전트 9개가 함께 설치됩니다. 자세한 옵션·스크립트 설치는 [설치](#설치-install) 섹션과 [`INSTALL.md`](INSTALL.md) 참고. (초기 패키징을 탐색한 [`gaebalai/im-not-ai`](https://github.com/gaebalai/im-not-ai) 포크도 있습니다.)
 
 **방법 D — GitHub Copilot CLI (공식, 단일 호출 경로)**
 
