@@ -93,7 +93,8 @@ _PATH_TAG = re.compile(r"<<<P>>>\s*(\S+?)\s*<<</P>>>")
 
 
 def run_humanize_pipeline(
-    text: str, *, skill: str = "humanize-korean", timeout: int = 1200
+    text: str, *, skill: str = "humanize-korean", model: str | None = None,
+    timeout: int = 1200,
 ) -> tuple[str, str]:
     """**제품이 실제로 도는 경로**로 스킬을 실행한다 — 파일 생성 허용.
 
@@ -118,14 +119,11 @@ def run_humanize_pipeline(
         f"_workspace/{{run_id}}/ 산출물을 남겨. 마지막에 final.md 의 절대경로만 "
         f"<<<P>>> 와 <<</P>>> 사이에 출력해."
     )
-    cmd = [
-        CLAUDE_BIN,
-        "--plugin-dir", _REPO_ROOT,
-        "--add-dir", _REPO_ROOT,
-        "--add-dir", workdir,
-        "--permission-mode", "acceptEdits",
-        "-p", prompt,
-    ]
+    cmd = [CLAUDE_BIN, "--plugin-dir", _REPO_ROOT, "--add-dir", _REPO_ROOT,
+           "--add-dir", workdir, "--permission-mode", "acceptEdits"]
+    if model:
+        cmd += ["--model", model]
+    cmd += ["-p", prompt]
     try:
         proc = subprocess.run(
             cmd, cwd=workdir, stdin=subprocess.DEVNULL, capture_output=True,

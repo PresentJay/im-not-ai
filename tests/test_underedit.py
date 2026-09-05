@@ -121,5 +121,41 @@ class UnderEditCliTests(unittest.TestCase):
         self.assertEqual(r.returncode, 3)
 
 
+class ValidatedSignalTests(unittest.TestCase):
+    """장르에서 검증된 신호로 판정한다.
+
+    실측 2026-09-05: 이 게이트가 변경률 0.5% 짜리 영어 윤문을 통과시켰다 —
+    렉시콘 단어 하나가 빠진 것을 개선으로 쳤고, 정작 그 장르에서 판별력이
+    확인된 신호(tricolon·쉼표 절)는 보지 않았다.
+    """
+
+    def setUp(self) -> None:
+        self.m = _load()
+
+    def test_blog_genre_carries_validated_signals(self) -> None:
+        got = self.m._en_validated("blog")
+        self.assertIn("tricolon(EN-3)", got)
+        self.assertIn("comma_segment_length", got)
+
+    def test_abstract_genre_has_none(self) -> None:
+        self.assertIsNone(self.m._en_validated("abstract"))
+
+    def test_tricolon_drop_counts_as_improvement(self) -> None:
+        before = "We shipped fast, learned, and adjusted. It worked."
+        after = "We shipped fast and learned. It worked."
+        out = self.m.check_underedit(
+            before, after, route_hint="standard", unit="tokens",
+            validated=self.m._en_validated("blog"),
+        )
+        self.assertIn("tricolon(EN-3)", out["improved"])
+        self.assertFalse(out["failed"])
+
+    def test_noise_level_move_is_not_improvement(self) -> None:
+        """연속 지표의 미동(+0.11 급)은 개선이 아니다 — 실측에서 통과를 만들었다."""
+        fn, want, min_delta = self.m._en_validated("blog")["comma_segment_length"]
+        self.assertEqual(want, "up")
+        self.assertGreaterEqual(min_delta, 0.3)
+
+
 if __name__ == "__main__":
     unittest.main()

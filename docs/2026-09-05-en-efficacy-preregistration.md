@@ -1,5 +1,7 @@
 # 영어 윤문 효능 측정 — 사전 등록 (2026-09-05)
 
+> **결과**: [`2026-09-05-en-efficacy-results.md`](2026-09-05-en-efficacy-results.md) — 판정은 **효능 미확인**이다.
+
 > **실행 전에 작성해 커밋한다.** 결과를 보고 기준을 고치면 측정이 아니라 홍보가 된다.
 > 실행: `python3 scripts/eval_en_efficacy.py --run 30 --report`
 

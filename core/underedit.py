@@ -50,6 +50,7 @@ def check_underedit(
     unit: str = "tokens",
     long_threshold: int = 35,
     lexicon_counter: Callable[[str], int] | None = None,
+    validated: dict[str, tuple[Callable[[str], float], str, float]] | None = None,
 ) -> dict:
     """지목된 티가 실제로 줄었는지 판정한다.
 
@@ -58,6 +59,13 @@ def check_underedit(
         ``skipped``  — light 경로라 검사하지 않았으면 True
         ``improved`` — {지표: (before, after)} 개선된 것만
         ``signals``  — {지표: (before, after)} 전수(보고용)
+
+    ``validated`` 는 **그 장르에서 판별력이 확인된 지표**를 넣는 통로다
+    ({이름: (계측함수, "down"|"up", 최소 변화폭)}). 건수형 지표는 한 건만 줄어도
+    의미가 있어 하한이 0 에 가깝고(인간 중앙값이 0 이다), 연속형은 잡음 하한을 둔다. 실측 2026-09-05: 영어 블로그 셀에서 이
+    게이트가 변경률 0.5% 짜리 윤문을 통과시켰다 — 렉시콘 단어 하나가 빠진 것을
+    개선으로 쳤기 때문이다. 정작 그 장르에서 검증된 신호(tricolon·쉼표 절)는
+    보고 있지 않았다. 판별력 없는 지표로 내리는 판정은 판정이 아니다.
     """
     bu = compute_universal(before, long_threshold=long_threshold, unit=unit)
     au = compute_universal(after, long_threshold=long_threshold, unit=unit)
@@ -75,6 +83,8 @@ def check_underedit(
     }
     if lexicon_counter is not None:
         signals["lexicon_hits"] = (lexicon_counter(before), lexicon_counter(after))
+    for name, (fn, _want, _min) in (validated or {}).items():
+        signals[name] = (fn(before), fn(after))
 
     if route_hint not in CHECKED_HINTS:
         return {
@@ -106,6 +116,13 @@ def check_underedit(
         xb, xa = signals["lexicon_hits"]
         if xa < xb:
             improved["lexicon_hits"] = (xb, xa)
+    # 검증된 신호는 방향만 맞으면 개선으로 친다 — 이 장르에서 판별력이 확인된
+    # 지표이므로 잡음 하한을 따로 두지 않는다.
+    for name, (_fn, want, min_delta) in (validated or {}).items():
+        vb, va = signals[name]
+        delta = (vb - va) if want == "down" else (va - vb)
+        if delta >= min_delta:
+            improved[name] = (vb, va)
 
     return {
         "failed": not improved,
@@ -119,6 +136,29 @@ def check_underedit(
             + ", ".join(f"{k} {b}→{a}" for k, (b, a) in sorted(improved.items()))
         ),
     }
+
+
+def _en_validated(genre: str) -> dict | None:
+    """영어 장르별 **검증된** 신호. 없으면 None(기존 산술 지표만 쓴다)."""
+    if genre != "blog":
+        return None  # abstract 셀은 쉼표 계열이 이미 산술 지표에 들어 있다
+    try:
+        sys.path.insert(0, os.path.join(os.path.dirname(_HERE), "lang", "en"))
+        from metrics_en import _TRICOLON_RE  # noqa: PLC0415
+        from metrics_universal import comma_segment_length  # noqa: PLC0415
+
+        def tricolon(text: str) -> float:
+            tokens = len(text.split()) or 1
+            return round(len(_TRICOLON_RE.findall(text)) / tokens * 1000, 2)
+
+        # tricolon: 인간 중앙값 0.00 이라 한 건 감소도 의미가 있다(하한 0.01).
+        # comma_segment: 인간 9.68 vs AI 8.34 — 격차 1.34 의 약 1/4 을 잡음 하한으로.
+        return {
+            "tricolon(EN-3)": (tricolon, "down", 0.01),
+            "comma_segment_length": (comma_segment_length, "up", 0.3),
+        }
+    except Exception:  # noqa: BLE001 — 신호가 없어도 게이트는 돌아야 한다.
+        return None
 
 
 def _en_lexicon_counter() -> Callable[[str], int] | None:
@@ -142,6 +182,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--before", required=True)
     ap.add_argument("--after", required=True)
     ap.add_argument("--lang", choices=("en", "ko"), default="ko")
+    ap.add_argument("--genre", default="blog",
+                    help="영어 임계 셀 (abstract|blog) — 검증된 신호를 고른다")
     ap.add_argument(
         "--route-hint",
         required=True,
@@ -167,6 +209,7 @@ def main(argv: list[str] | None = None) -> int:
         unit=unit,
         long_threshold=threshold,
         lexicon_counter=_en_lexicon_counter() if args.lang == "en" else None,
+        validated=_en_validated(args.genre) if args.lang == "en" else None,
     )
     for name, (b, a) in sorted(out["signals"].items()):
         print(f"  {name:22} {b} → {a}")

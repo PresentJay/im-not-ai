@@ -26,6 +26,13 @@ description: AI(ChatGPT·Claude·Gemini 등)가 쓴 영어 텍스트를 사람�
 > 영어에는 finalize 에이전트도, 검증 증적을 주장할 근거도 아직 없다.
 > 등급 정의: `${SKILL_ROOT}/core/principles.md`.
 
+> **실측된 동작 (2026-09-05, n=8).** 이 스킬은 **정밀하지만 적게 고친다.**
+> 게이트 위반 0%(내용·서법·역주입), 지표 역행 0건, 변경률 중앙값 **0.5%**.
+> 같은 글을 맨 프롬프트("make this sound human")로 고치면 지표는 크게 움직이지만
+> 내용 43% · 서법 64% · 역주입 79% 에서 위반이 난다.
+> **"망가뜨리지 않지만 많이 하지도 않는다"**가 현재 상태다 — 영어에서 근거가 붙은
+> 규칙이 적어 손댈 자리도 적다. 근거: `docs/2026-09-05-en-efficacy-results.md`.
+
 ## Phase 0: 상태 줄 + 경로 결정
 
 Phase 1(shim) 직후 다음 한 줄을 출력한다.
@@ -170,7 +177,7 @@ python3 ${SKILL_ROOT}/core/reinjection.py \
 python3 ${SKILL_ROOT}/core/underedit.py \
   --before _workspace/{run_id}/01_input.txt \
   --after  _workspace/{run_id}/final.md \
-  --lang en --route-hint {00_metrics.json 의 route_hint 값}
+  --lang en --genre {abstract|blog} --route-hint {00_metrics.json 의 route_hint 값}
 ```
 - exit 0 — 지목된 티가 줄었다(또는 light 라 검사 생략). 통과.
 - exit 1 — **과소윤문.** 라우터가 손댈 게 있다고 했는데 분산·장문율·쉼표·어휘가
