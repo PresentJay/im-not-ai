@@ -128,7 +128,7 @@ All three were withdrawn. That correction is the point of the project: the ruleb
 |---|---|---|
 | `abstract` | arXiv: 42 human vs 21 AI | **0.95** |
 | `blog` (default) | LessWrong · Paul Graham · SSC: 100 human vs 102 AI | **0.65** |
-| `blog` on GPT prose | same humans vs 14 from the codex CLI | **1.33** |
+| `blog` on GPT prose | same humans vs 34 from the codex CLI | **1.37** |
 
 Anything outside those two cells is **unvalidated**, and the skill says so to the user instead of pretending otherwise. Three blog-cell metrics that looked strong turned out to be per-model idiolect and were dropped.
 

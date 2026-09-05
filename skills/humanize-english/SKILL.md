@@ -15,7 +15,7 @@ description: AI(ChatGPT·Claude·Gemini 등)가 쓴 영어 텍스트를 사람�
 > |---|---|---|
 > | abstract | arXiv 인간 42 vs AI 21 | **0.95** |
 > | blog (기본) | LW·PG·SSC 인간 100 vs AI 102 | **0.65** |
-> | blog / GPT 산문 | 같은 인간 vs codex CLI 14 | **1.33** |
+> | blog / GPT 산문 | 같은 인간 vs codex CLI 34 | **1.37** |
 >
 > 두 셀 밖(마케팅 카피·기술 문서·소설)은 **미검증이다.** 그 경우 `route_hint` 를
 > 근거로 들지 말고 사용자에게 한 줄로 알린다.
@@ -107,6 +107,8 @@ SKILL_ROOT="$(d="$(cd -P "${CLAUDE_SKILL_DIR}" && pwd)"; \
    - `en1_participial_per_1k` 가 높으면 → **EN-1 우선**(분사절을 절·독립문으로).
      룰북 최강 근거(AUC 0.787, 전 모델 일치, E1+E2+E3).
    - `en2_be_verb_per_1k` 가 낮으면 → **EN-2**(무거운 동사·명사구를 be동사로).
+   - `tricolon_per_1k` 가 0 보다 크면 → **EN-3**(3항 등위를 두 항으로 줄이거나
+     문장을 나눈다. 항목이 각기 다른 사실이면 보존한다).
    - ⚠️ `dispersion` 은 **G1 미통과**다(opus 는 인간보다 높다). 겨냥에 쓰지 않는다.
    - `lexicon.by_family` 에 `F-7` 이 있으면 → 범용 동사 교체 우선.
    - `comma_inclusion_rate` 가 높으면 → 쉼표 분절 정리.
@@ -213,7 +215,7 @@ python3 ${SKILL_ROOT}/core/underedit.py \
 ## 참고 자료
 
 - 언어 무관 원리·증거 기준: `${SKILL_ROOT}/core/principles.md`
-- 영어 룰북: `${SKILL_ROOT}/lang/en/quick-rules.md` (Tier A 7 + Tier B 7)
+- 영어 룰북: `${SKILL_ROOT}/lang/en/quick-rules.md` (Tier A 9 + Tier B 7)
 - 영어 렉시콘: `${SKILL_ROOT}/lang/en/lexicon.json` (Kobak 407건, 라우터용 12건)
 - **학술 근거 SSOT: `${SKILL_ROOT}/lang/en/scholarship.md`** — 규칙별 인용·등급·정정 기록
 - 후보 풀: `${SKILL_ROOT}/lang/en/candidate-pool.md` — 커뮤니티 수집 35건 + 승격 절차

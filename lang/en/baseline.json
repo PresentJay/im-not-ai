@@ -444,9 +444,13 @@
   },
   "blog_essay_r2": {
    "status": "판별 가능",
-   "captured_at": "2026-09-05T02:48:14+00:00",
+   "captured_at": "2026-09-05T07:03:48+00:00",
    "human_n": 100,
-   "ai_n": 102,
+   "ai_n": 136,
+   "ai_n_by_arm": {
+    "claude(3모델)": 102,
+    "gpt(codex-cli)": 34
+   },
    "source_human": {
     "lesswrong": 40,
     "paulgraham": 30,
@@ -456,79 +460,84 @@
    "ai_prompt": "실사용자 프롬프트 — engaging blog post, 700단어, 형식 무지정",
    "metrics": {
     "sentence_length_dispersion": {
-     "auc": 0.349,
+     "auc": 0.278,
      "ci95": [
-      0.275,
-      0.426
+      0.215,
+      0.344
      ],
      "per_model": {
       "claude-opus-5": 0.345,
       "claude-sonnet-5": 0.552,
-      "claude-haiku-4-5-20251001": 0.149
+      "claude-haiku-4-5-20251001": 0.149,
+      "gpt(codex-cli)": 0.065
      },
      "direction_consistent": false,
      "verdict": "모델 개인어",
      "human_median": 9.86,
-     "ai_median": 8.26
+     "ai_median": 7.46
     },
     "comma_inclusion_rate": {
-     "auc": 0.396,
+     "auc": 0.368,
      "ci95": [
-      0.319,
-      0.473
+      0.294,
+      0.445
      ],
      "per_model": {
       "claude-opus-5": 0.336,
       "claude-sonnet-5": 0.546,
-      "claude-haiku-4-5-20251001": 0.306
+      "claude-haiku-4-5-20251001": 0.306,
+      "gpt(codex-cli)": 0.284
      },
      "direction_consistent": false,
      "verdict": "모델 개인어",
      "human_median": 50.0,
-     "ai_median": 44.44
+     "ai_median": 43.48
     },
     "comma_usage_rate": {
-     "auc": 0.495,
+     "auc": 0.484,
      "ci95": [
-      0.415,
-      0.574
+      0.408,
+      0.562
      ],
      "per_model": {
       "claude-opus-5": 0.435,
       "claude-sonnet-5": 0.691,
-      "claude-haiku-4-5-20251001": 0.358
+      "claude-haiku-4-5-20251001": 0.358,
+      "gpt(codex-cli)": 0.45
      },
      "direction_consistent": false,
      "verdict": "표본 부족",
      "human_median": 0.74,
-     "ai_median": 0.74
+     "ai_median": 0.72
     },
     "comma_segment_length": {
-     "auc": 0.281,
+     "auc": 0.224,
      "ci95": [
-      0.215,
-      0.355
+      0.167,
+      0.287
      ],
      "per_model": {
       "claude-opus-5": 0.233,
       "claude-sonnet-5": 0.408,
-      "claude-haiku-4-5-20251001": 0.201
+      "claude-haiku-4-5-20251001": 0.201,
+      "gpt(codex-cli)": 0.054
      },
      "direction_consistent": true,
      "verdict": "승격 후보",
      "human_median": 9.68,
-     "ai_median": 8.34
+     "ai_median": 7.89
     },
     "en1_participial": {
-     "auc": 0.587,
+     "auc": 0.609,
      "ci95": [
-      0.522,
-      0.651
+      0.546,
+      0.667
      ],
      "per_model": {
       "claude-opus-5": 0.568,
       "claude-sonnet-5": 0.608,
-      "claude-haiku-4-5-20251001": 0.585
+      "claude-haiku-4-5-20251001": 0.585,
+      "gpt(codex-cli)": 0.675
      },
      "direction_consistent": true,
      "verdict": "약함",
@@ -536,15 +545,16 @@
      "ai_median": 0.0
     },
     "en2_be_verbs": {
-     "auc": 0.402,
+     "auc": 0.41,
      "ci95": [
-      0.327,
+      0.336,
       0.481
      ],
      "per_model": {
       "claude-opus-5": 0.603,
       "claude-sonnet-5": 0.411,
-      "claude-haiku-4-5-20251001": 0.193
+      "claude-haiku-4-5-20251001": 0.193,
+      "gpt(codex-cli)": 0.433
      },
      "direction_consistent": false,
      "verdict": "모델 개인어",
@@ -552,15 +562,16 @@
      "ai_median": 23.33
     },
     "fragment_rate": {
-     "auc": 0.554,
+     "auc": 0.559,
      "ci95": [
-      0.475,
-      0.632
+      0.484,
+      0.638
      ],
      "per_model": {
       "claude-opus-5": 0.65,
       "claude-sonnet-5": 0.468,
-      "claude-haiku-4-5-20251001": 0.544
+      "claude-haiku-4-5-20251001": 0.544,
+      "gpt(codex-cli)": 0.574
      },
      "direction_consistent": false,
      "verdict": "표본 부족",
@@ -568,15 +579,16 @@
      "ai_median": 8.33
     },
     "rhetorical_question": {
-     "auc": 0.429,
+     "auc": 0.44,
      "ci95": [
-      0.358,
-      0.502
+      0.373,
+      0.509
      ],
      "per_model": {
       "claude-opus-5": 0.369,
       "claude-sonnet-5": 0.431,
-      "claude-haiku-4-5-20251001": 0.488
+      "claude-haiku-4-5-20251001": 0.488,
+      "gpt(codex-cli)": 0.471
      },
      "direction_consistent": true,
      "verdict": "표본 부족",
@@ -584,20 +596,21 @@
      "ai_median": 0.0
     },
     "second_person": {
-     "auc": 0.522,
+     "auc": 0.452,
      "ci95": [
-      0.447,
-      0.599
+      0.381,
+      0.526
      ],
      "per_model": {
       "claude-opus-5": 0.592,
       "claude-sonnet-5": 0.488,
-      "claude-haiku-4-5-20251001": 0.486
+      "claude-haiku-4-5-20251001": 0.486,
+      "gpt(codex-cli)": 0.241
      },
      "direction_consistent": false,
      "verdict": "표본 부족",
      "human_median": 13.33,
-     "ai_median": 16.67
+     "ai_median": 10.0
     },
     "filler_phrase": {
      "auc": 0.49,
@@ -608,7 +621,8 @@
      "per_model": {
       "claude-opus-5": 0.49,
       "claude-sonnet-5": 0.49,
-      "claude-haiku-4-5-20251001": 0.49
+      "claude-haiku-4-5-20251001": 0.49,
+      "gpt(codex-cli)": 0.49
      },
      "direction_consistent": true,
      "verdict": "표본 부족",
@@ -616,15 +630,16 @@
      "ai_median": 0.0
     },
     "vague_source": {
-     "auc": 0.49,
+     "auc": 0.487,
      "ci95": [
       0.465,
-      0.514
+      0.507
      ],
      "per_model": {
       "claude-opus-5": 0.48,
       "claude-sonnet-5": 0.48,
-      "claude-haiku-4-5-20251001": 0.509
+      "claude-haiku-4-5-20251001": 0.509,
+      "gpt(codex-cli)": 0.48
      },
      "direction_consistent": false,
      "verdict": "표본 부족",
@@ -632,15 +647,16 @@
      "ai_median": 0.0
     },
     "range_formula": {
-     "auc": 0.509,
+     "auc": 0.508,
      "ci95": [
-      0.479,
-      0.544
+      0.477,
+      0.538
      ],
      "per_model": {
       "claude-opus-5": 0.519,
       "claude-sonnet-5": 0.504,
-      "claude-haiku-4-5-20251001": 0.504
+      "claude-haiku-4-5-20251001": 0.504,
+      "gpt(codex-cli)": 0.504
      },
      "direction_consistent": true,
      "verdict": "표본 부족",
@@ -648,20 +664,21 @@
      "ai_median": 0.0
     },
     "tricolon": {
-     "auc": 0.681,
+     "auc": 0.737,
      "ci95": [
-      0.621,
-      0.74
+      0.683,
+      0.789
      ],
      "per_model": {
       "claude-opus-5": 0.684,
       "claude-sonnet-5": 0.655,
-      "claude-haiku-4-5-20251001": 0.704
+      "claude-haiku-4-5-20251001": 0.704,
+      "gpt(codex-cli)": 0.903
      },
      "direction_consistent": true,
-     "verdict": "약함",
+     "verdict": "승격 후보",
      "human_median": 0.0,
-     "ai_median": 1.67
+     "ai_median": 3.33
     },
     "deeper_truth": {
      "auc": 0.5,
@@ -672,7 +689,8 @@
      "per_model": {
       "claude-opus-5": 0.5,
       "claude-sonnet-5": 0.5,
-      "claude-haiku-4-5-20251001": 0.5
+      "claude-haiku-4-5-20251001": 0.5,
+      "gpt(codex-cli)": 0.5
      },
      "direction_consistent": true,
      "verdict": "표본 부족",
@@ -680,31 +698,33 @@
      "ai_median": 0.0
     },
     "hype_word": {
-     "auc": 0.535,
+     "auc": 0.549,
      "ci95": [
-      0.485,
-      0.585
+      0.502,
+      0.596
      ],
      "per_model": {
       "claude-opus-5": 0.455,
       "claude-sonnet-5": 0.498,
-      "claude-haiku-4-5-20251001": 0.653
+      "claude-haiku-4-5-20251001": 0.653,
+      "gpt(codex-cli)": 0.591
      },
      "direction_consistent": false,
-     "verdict": "표본 부족",
+     "verdict": "모델 개인어",
      "human_median": 0.0,
      "ai_median": 0.0
     },
     "closing_formula": {
-     "auc": 0.505,
+     "auc": 0.506,
      "ci95": [
       0.49,
-      0.52
+      0.522
      ],
      "per_model": {
       "claude-opus-5": 0.495,
       "claude-sonnet-5": 0.51,
-      "claude-haiku-4-5-20251001": 0.51
+      "claude-haiku-4-5-20251001": 0.51,
+      "gpt(codex-cli)": 0.51
      },
      "direction_consistent": false,
      "verdict": "표본 부족",
@@ -713,28 +733,29 @@
     }
    },
    "promoted": [
-    "comma_segment_length"
+    "comma_segment_length",
+    "tricolon"
    ],
    "cross_family_gpt": {
-    "n": 14,
+    "n": 34,
     "generator": "codex-cli (OpenAI GPT)",
     "auc": {
-     "sentence_length_dispersion": 0.055,
-     "comma_inclusion_rate": 0.241,
-     "comma_usage_rate": 0.358,
-     "comma_segment_length": 0.04,
-     "en1_participial": 0.638,
-     "en2_be_verbs": 0.496,
-     "fragment_rate": 0.612,
-     "rhetorical_question": 0.557,
-     "second_person": 0.219,
+     "sentence_length_dispersion": 0.065,
+     "comma_inclusion_rate": 0.284,
+     "comma_usage_rate": 0.45,
+     "comma_segment_length": 0.054,
+     "en1_participial": 0.675,
+     "en2_be_verbs": 0.433,
+     "fragment_rate": 0.574,
+     "rhetorical_question": 0.471,
+     "second_person": 0.241,
      "filler_phrase": 0.49,
      "vague_source": 0.48,
-     "range_formula": 0.511,
-     "tricolon": 0.86,
+     "range_formula": 0.504,
+     "tricolon": 0.903,
      "deeper_truth": 0.5,
-     "hype_word": 0.586,
-     "closing_formula": 0.495
+     "hype_word": 0.591,
+     "closing_formula": 0.51
     },
     "router": {
      "human": {
@@ -744,10 +765,10 @@
      },
      "gpt": {
       "light": 0.0,
-      "standard": 0.07,
-      "heavy": 0.93
+      "standard": 0.03,
+      "heavy": 0.97
      },
-     "separation": 1.33
+     "separation": 1.37
     }
    },
    "router_current": {

@@ -16,7 +16,7 @@ _RULEBOOK = os.path.join(_ROOT, "lang", "en", "quick-rules.md")
 
 # EN-* 는 한국어 대응물이 없는 영어 고유 규칙이다.
 # 실물 기준(2026-09-03). E-1 은 G1 미통과로 제외됨.
-TIER_A = ("C-8", "F-7", "F-4", "EN-1", "EN-2", "C-12b", "C-12", "E-5")
+TIER_A = ("C-8", "F-7", "F-4", "EN-1", "EN-2", "EN-3", "C-12b", "C-12", "E-5")
 TIER_B = ("C-1", "C-2", "C-3", "C-5", "C-6", "C-9", "C-10")
 # A-9·G-1·G-2 는 v0.2 에서 철회·반전됐다 — 규칙 표에 있으면 안 된다.
 # E-1 은 2026-09-03 G1 미통과로 강등(opus 0.59 vs haiku 0.05 — 방향이 갈린다).
@@ -88,6 +88,17 @@ class EnRulebookTests(unittest.TestCase):
         """em dash 는 규칙이 아니라 관측 지표임이 본문에 남아야 한다."""
         self.assertIn("em dash", self.text)
         self.assertIn("관측", self.text)
+
+    def test_en3_states_the_syntactic_frame(self) -> None:
+        """EN-3 은 어휘 목록이 아니라 `A, B, and C` 프레임이어야 한다.
+
+        이 저장소는 표면 예시를 인코딩하고 프레임을 놓친 실패를 세 번 했다
+        (C-8 재현율 0/6 · 렉시콘 전수 오발화 · EN-1 초판 0.00).
+        """
+        row = next(r for r in self.rows if r.startswith("| **EN-3**"))
+        self.assertIn("A, B, and C", row)
+        self.assertIn("프레임", row)
+        self.assertRegex(row, r"E1")
 
     def test_c8_lists_multiple_syntactic_frames(self) -> None:
         """C-8 은 프레임 하나만 적으면 첫 정규식처럼 재현율이 무너진다(0/6)."""

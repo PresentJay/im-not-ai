@@ -576,20 +576,35 @@ def main(argv: list[str] | None = None) -> int:
         titles = list(dict.fromkeys(r["title"] for r in ai))[: args.gen_gpt] or [
             r["title"] for r in human[: args.gen_gpt]
         ]
-        _save("ai_gpt.json", gen_gpt(titles))
-        print(f"GPT {len(_load('ai_gpt.json'))}편")
+        # **이어 받는다.** 이미 생성한 제목은 다시 부르지 않는다 — 팔을 넓힐 때마다
+        # 전량 재생성하면 비용이 배로 들고, 앞서 받은 표본을 버릴 이유도 없다.
+        done = _load("ai_gpt.json")
+        have = {r["title"] for r in done}
+        todo = [t for t in titles if t not in have]
+        if todo:
+            done += gen_gpt(todo)
+            _save("ai_gpt.json", done)
+        print(f"GPT {len(done)}편 (신규 {len(todo)} · 기존 {len(have)})")
     if args.report:
         human, ai = _load("human.json"), _load("ai.json")
         if not human or not ai:
             raise SystemExit("human.json / ai.json 이 필요하다")
         keys = list(_metrics(human[0]["text"], human[0].get("tail")))
+        # **승격 판정에는 측정한 모든 계열을 넣는다.** GPT 팔이 생긴 뒤에도 Claude 만
+        # 보면, 계열을 건너뛰는 신호를 계열 하나의 표본 부족 탓에 탈락시킨다 —
+        # tricolon 이 Claude 단독 0.681 로 기준에 0.019 모자랐다가, GPT 34편을
+        # 더하자 0.737 로 넘었다. 기준을 낮춘 것이 아니라 표본을 넓힌 것이다.
+        gpt_arm = _load("ai_gpt.json")
+        ai_all = ai + gpt_arm
         hv = {k: _values(human, k) for k in keys}
-        av = {k: _values(ai, k) for k in keys}
+        av = {k: _values(ai_all, k) for k in keys}
+        arms = {m: [r for r in ai if r.get("model") == m] for m in _base._MODELS}
+        if gpt_arm:
+            arms["gpt(codex-cli)"] = gpt_arm  # 계열 교차 — G1 의 원래 취지
         per_model = {
             m: {k: auc([_metrics(r["text"], r.get("tail"))[k] for r in sub], hv[k])
                 for k in keys}
-            for m in _base._MODELS
-            for sub in ([r for r in ai if r.get("model") == m],)
+            for m, sub in arms.items()
             if sub
         }
         rows = {}
@@ -615,9 +630,8 @@ def main(argv: list[str] | None = None) -> int:
             }
         promoted = [k for k, v in rows.items() if v["verdict"] == "승격 후보"]
 
-        # 모델 계열 교차 — Claude 3모델만으로는 "AI 티"인지 "Claude 개인어"인지
-        # 가릴 수 없다. G1 의 원래 취지가 계열을 건너뛰는 것이다.
-        gpt = _load("ai_gpt.json")
+        # 계열별 상세는 따로 싣는다(라우터 분리도 비교용).
+        gpt = gpt_arm
         cross_family = None
         if gpt:
             g_dist = _route_dist(gpt, _blog_router(human, ai)["seg_max"])
@@ -635,7 +649,8 @@ def main(argv: list[str] | None = None) -> int:
             "status": "판별 가능" if promoted else "**판별 실패**",
             "captured_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "human_n": len(human),
-            "ai_n": len(ai),
+            "ai_n": len(ai_all),
+            "ai_n_by_arm": {"claude(3모델)": len(ai), "gpt(codex-cli)": len(gpt_arm)},
             "source_human": dict(Counter(r["source"] for r in human)),
             "excerpt": f"본문 {_SKIP_WORDS}~{_SKIP_WORDS + _TAKE_WORDS}단어 (도입부 제외)",
             "ai_prompt": "실사용자 프롬프트 — engaging blog post, 700단어, 형식 무지정",
