@@ -54,6 +54,7 @@ class PipelineLiveTests(unittest.TestCase):
         self.assertNotEqual(gate.returncode, 3, f"게이트 실행 오류: {gate.stderr}")
 
 
+@unittest.skipIf(hr.CLAUDE_BIN is None, "claude CLI 없음 — live 통합 테스트 skip")
 class EnglishPipelineLiveTests(unittest.TestCase):
     """영어 스킬을 실제로 호출한다.
 

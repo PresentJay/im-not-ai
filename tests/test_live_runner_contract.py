@@ -57,5 +57,38 @@ class RunnerContractTests(unittest.TestCase):
         self.assertIsNone(self.m._VERSION_TAG.search("버전 없음"))
 
 
+class LiveGuardContractTests(unittest.TestCase):
+    """live 테스트 클래스는 **전부** CLI 부재 시 skip 가드를 달아야 한다.
+
+    실사고(2026-09-05): 영어 파이프라인 테스트에 가드를 빠뜨려, claude CLI 가 없는
+    CI 에서 SKIP 대신 FAIL 이 났다. 로컬에서는 CLI 가 있어 보이지 않는 결함이다.
+    """
+
+    def test_every_live_testcase_has_a_skip_guard(self) -> None:
+        import ast
+        import glob
+
+        checked = 0
+        for path in glob.glob(os.path.join(_ROOT, "tests", "test_*.py")):
+            if os.path.samefile(path, __file__):
+                continue  # 이 계약 자체는 러너를 부르지 않는다(문자열만 검사)
+            with open(path, encoding="utf-8") as f:
+                tree = ast.parse(f.read())
+            for node in tree.body:
+                if not isinstance(node, ast.ClassDef):
+                    continue
+                body = ast.unparse(node)
+                # **파일 이름이 아니라 실제 호출로 판정한다.** 러너를 부르는
+                # 클래스만 CLI 가 필요하다.
+                if "run_humanize" not in body:
+                    continue
+                checked += 1
+                decorators = [ast.unparse(d) for d in node.decorator_list]
+                self.assertTrue(
+                    any("skipIf" in d and "CLAUDE_BIN" in d for d in decorators),
+                    f"{os.path.basename(path)}::{node.name} 에 CLI 부재 skip 가드가 없다",
+                )
+        self.assertGreaterEqual(checked, 2, "live 클래스를 하나도 못 찾았다 — 탐지가 깨졌다")
+
 if __name__ == "__main__":
     unittest.main()
