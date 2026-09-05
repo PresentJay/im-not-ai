@@ -838,7 +838,7 @@
   "fix": "생성은 저장소 밖 디렉터리에서 실행한다. 생성물은 메타 발화 정규식으로 선별한다."
  },
  "efficacy": {
-  "captured_at": "2026-09-05T08:08:41+00:00",
+  "captured_at": "2026-09-05T08:38:14+00:00",
   "preregistration": "docs/2026-09-05-en-efficacy-preregistration.md",
   "model": "claude-sonnet-5",
   "arms": {
@@ -929,25 +929,25 @@
     }
    },
    "skill": {
-    "n": 8,
+    "n": 27,
     "primary": {
      "tricolon": {
       "direction": "down",
-      "better": 4,
-      "worse": 0,
-      "p": 0.125,
-      "significant": false,
-      "auc_before": 0.675,
-      "auc_after": 0.472
+      "better": 13,
+      "worse": 1,
+      "p": 0.00183,
+      "significant": true,
+      "auc_before": 0.714,
+      "auc_after": 0.598
      },
      "comma_segment_length": {
       "direction": "up",
-      "better": 6,
-      "worse": 0,
-      "p": 0.03125,
+      "better": 21,
+      "worse": 3,
+      "p": 0.00028,
       "significant": true,
-      "auc_before": 0.316,
-      "auc_after": 0.36
+      "auc_before": 0.234,
+      "auc_after": 0.281
      }
     },
     "gate_violations": {
@@ -961,14 +961,14 @@
      "reinjection": 0.0
     },
     "change_rate": {
-     "median": 0.005,
-     "max": 0.027,
+     "median": 0.007,
+     "max": 0.035,
      "over_50pct": 0
     },
     "router_after": {
-     "light": 0.62,
-     "standard": 0.25,
-     "heavy": 0.12
+     "light": 0.33,
+     "standard": 0.3,
+     "heavy": 0.37
     }
    }
   },
