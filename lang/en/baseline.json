@@ -441,6 +441,334 @@
    },
    "finding": "묶은 AUC 는 전부 |0.5차| < 0.20 (최대 0.188). 모델 방향이 일치하는 지표는 3/6개(sentence_length_dispersion, comma_segment_length, en1_participial) 뿐이고, 초록 셀의 최강 신호였던 쉼표 계열·EN-2 는 모델마다 방향이 갈린다 — 이 장르에서는 AI 티가 아니라 모델 개인어다.",
    "purpose": "1회차 blog 셀(HN 댓글)의 음성 결과가 장르 탓인지 레지스터 탓인지 가른다. 다듬어진 에세이로 인간 쪽만 바꾸고 나머지는 동일하게 유지했다."
+  },
+  "blog_essay_r2": {
+   "status": "판별 가능",
+   "captured_at": "2026-09-05T01:47:25+00:00",
+   "human_n": 100,
+   "ai_n": 102,
+   "source_human": {
+    "lesswrong": 40,
+    "paulgraham": 30,
+    "slatestarcodex": 30
+   },
+   "excerpt": "본문 200~500단어 (도입부 제외)",
+   "ai_prompt": "실사용자 프롬프트 — engaging blog post, 700단어, 형식 무지정",
+   "metrics": {
+    "sentence_length_dispersion": {
+     "auc": 0.349,
+     "ci95": [
+      0.275,
+      0.426
+     ],
+     "per_model": {
+      "claude-opus-5": 0.345,
+      "claude-sonnet-5": 0.552,
+      "claude-haiku-4-5-20251001": 0.149
+     },
+     "direction_consistent": false,
+     "verdict": "모델 개인어",
+     "human_median": 9.86,
+     "ai_median": 8.26
+    },
+    "comma_inclusion_rate": {
+     "auc": 0.396,
+     "ci95": [
+      0.319,
+      0.473
+     ],
+     "per_model": {
+      "claude-opus-5": 0.336,
+      "claude-sonnet-5": 0.546,
+      "claude-haiku-4-5-20251001": 0.306
+     },
+     "direction_consistent": false,
+     "verdict": "모델 개인어",
+     "human_median": 50.0,
+     "ai_median": 44.44
+    },
+    "comma_usage_rate": {
+     "auc": 0.495,
+     "ci95": [
+      0.415,
+      0.574
+     ],
+     "per_model": {
+      "claude-opus-5": 0.435,
+      "claude-sonnet-5": 0.691,
+      "claude-haiku-4-5-20251001": 0.358
+     },
+     "direction_consistent": false,
+     "verdict": "표본 부족",
+     "human_median": 0.74,
+     "ai_median": 0.74
+    },
+    "comma_segment_length": {
+     "auc": 0.281,
+     "ci95": [
+      0.215,
+      0.355
+     ],
+     "per_model": {
+      "claude-opus-5": 0.233,
+      "claude-sonnet-5": 0.408,
+      "claude-haiku-4-5-20251001": 0.201
+     },
+     "direction_consistent": true,
+     "verdict": "승격 후보",
+     "human_median": 9.68,
+     "ai_median": 8.34
+    },
+    "en1_participial": {
+     "auc": 0.587,
+     "ci95": [
+      0.522,
+      0.651
+     ],
+     "per_model": {
+      "claude-opus-5": 0.568,
+      "claude-sonnet-5": 0.608,
+      "claude-haiku-4-5-20251001": 0.585
+     },
+     "direction_consistent": true,
+     "verdict": "약함",
+     "human_median": 0.0,
+     "ai_median": 0.0
+    },
+    "en2_be_verbs": {
+     "auc": 0.402,
+     "ci95": [
+      0.327,
+      0.481
+     ],
+     "per_model": {
+      "claude-opus-5": 0.603,
+      "claude-sonnet-5": 0.411,
+      "claude-haiku-4-5-20251001": 0.193
+     },
+     "direction_consistent": false,
+     "verdict": "모델 개인어",
+     "human_median": 30.0,
+     "ai_median": 23.33
+    },
+    "fragment_rate": {
+     "auc": 0.554,
+     "ci95": [
+      0.475,
+      0.632
+     ],
+     "per_model": {
+      "claude-opus-5": 0.65,
+      "claude-sonnet-5": 0.468,
+      "claude-haiku-4-5-20251001": 0.544
+     },
+     "direction_consistent": false,
+     "verdict": "표본 부족",
+     "human_median": 6.46,
+     "ai_median": 8.33
+    },
+    "rhetorical_question": {
+     "auc": 0.429,
+     "ci95": [
+      0.358,
+      0.502
+     ],
+     "per_model": {
+      "claude-opus-5": 0.369,
+      "claude-sonnet-5": 0.431,
+      "claude-haiku-4-5-20251001": 0.488
+     },
+     "direction_consistent": true,
+     "verdict": "표본 부족",
+     "human_median": 3.33,
+     "ai_median": 0.0
+    },
+    "second_person": {
+     "auc": 0.522,
+     "ci95": [
+      0.447,
+      0.599
+     ],
+     "per_model": {
+      "claude-opus-5": 0.592,
+      "claude-sonnet-5": 0.488,
+      "claude-haiku-4-5-20251001": 0.486
+     },
+     "direction_consistent": false,
+     "verdict": "표본 부족",
+     "human_median": 13.33,
+     "ai_median": 16.67
+    },
+    "filler_phrase": {
+     "auc": 0.49,
+     "ci95": [
+      0.475,
+      0.5
+     ],
+     "per_model": {
+      "claude-opus-5": 0.49,
+      "claude-sonnet-5": 0.49,
+      "claude-haiku-4-5-20251001": 0.49
+     },
+     "direction_consistent": true,
+     "verdict": "표본 부족",
+     "human_median": 0.0,
+     "ai_median": 0.0
+    },
+    "vague_source": {
+     "auc": 0.49,
+     "ci95": [
+      0.465,
+      0.514
+     ],
+     "per_model": {
+      "claude-opus-5": 0.48,
+      "claude-sonnet-5": 0.48,
+      "claude-haiku-4-5-20251001": 0.509
+     },
+     "direction_consistent": false,
+     "verdict": "표본 부족",
+     "human_median": 0.0,
+     "ai_median": 0.0
+    },
+    "range_formula": {
+     "auc": 0.509,
+     "ci95": [
+      0.479,
+      0.544
+     ],
+     "per_model": {
+      "claude-opus-5": 0.519,
+      "claude-sonnet-5": 0.504,
+      "claude-haiku-4-5-20251001": 0.504
+     },
+     "direction_consistent": true,
+     "verdict": "표본 부족",
+     "human_median": 0.0,
+     "ai_median": 0.0
+    },
+    "tricolon": {
+     "auc": 0.681,
+     "ci95": [
+      0.621,
+      0.74
+     ],
+     "per_model": {
+      "claude-opus-5": 0.684,
+      "claude-sonnet-5": 0.655,
+      "claude-haiku-4-5-20251001": 0.704
+     },
+     "direction_consistent": true,
+     "verdict": "약함",
+     "human_median": 0.0,
+     "ai_median": 1.67
+    },
+    "deeper_truth": {
+     "auc": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ],
+     "per_model": {
+      "claude-opus-5": 0.5,
+      "claude-sonnet-5": 0.5,
+      "claude-haiku-4-5-20251001": 0.5
+     },
+     "direction_consistent": true,
+     "verdict": "표본 부족",
+     "human_median": 0.0,
+     "ai_median": 0.0
+    },
+    "hype_word": {
+     "auc": 0.535,
+     "ci95": [
+      0.485,
+      0.585
+     ],
+     "per_model": {
+      "claude-opus-5": 0.455,
+      "claude-sonnet-5": 0.498,
+      "claude-haiku-4-5-20251001": 0.653
+     },
+     "direction_consistent": false,
+     "verdict": "표본 부족",
+     "human_median": 0.0,
+     "ai_median": 0.0
+    },
+    "closing_formula": {
+     "auc": 0.505,
+     "ci95": [
+      0.49,
+      0.52
+     ],
+     "per_model": {
+      "claude-opus-5": 0.495,
+      "claude-sonnet-5": 0.51,
+      "claude-haiku-4-5-20251001": 0.51
+     },
+     "direction_consistent": false,
+     "verdict": "표본 부족",
+     "human_median": 0.0,
+     "ai_median": 0.0
+    }
+   },
+   "promoted": [
+    "comma_segment_length"
+   ],
+   "router_current": {
+    "note": "현행 라우터(초록 보정 임계)를 블로그 입력에 그대로 쓴 결과",
+    "human": {
+     "light": 0.21,
+     "standard": 0.58,
+     "heavy": 0.21
+    },
+    "ai": {
+     "light": 0.04,
+     "standard": 0.63,
+     "heavy": 0.33
+    },
+    "separation": 0.29
+   },
+   "router_blog_calibrated": {
+    "signals": [
+     "comma_segment_length",
+     "tricolon",
+     "en1_participial"
+    ],
+    "rule": "comma_segment < 8.57 · tricolon > 0 · en1 > 0 — 2개 이상 heavy, 1개 standard, 0개 light",
+    "seg_max": 8.57,
+    "human": {
+     "light": 0.56,
+     "standard": 0.28,
+     "heavy": 0.16
+    },
+    "ai": {
+     "light": 0.22,
+     "standard": 0.31,
+     "heavy": 0.47
+    },
+    "separation": 0.65,
+    "separation_by_model": {
+     "claude-opus-5": 0.58,
+     "claude-sonnet-5": 0.6,
+     "claude-haiku-4-5-20251001": 0.78
+    },
+    "holdout_by_human_source": {
+     "fit=lesswrong": {
+      "seg_max": 7.94,
+      "separation": 0.74
+     },
+     "fit=paulgraham": {
+      "seg_max": 8.57,
+      "separation": 0.53
+     },
+     "fit=slatestarcodex": {
+      "seg_max": 9.21,
+      "separation": 0.68
+     }
+    }
+   },
+   "design": "1·2회차 음성 결과를 네 방향에서 강화: 후보 7건 신규 계측 · 실사용자 프롬프트 · 인간 100편 3출처 · 본문 중간 발췌. 판정은 부트스트랩 CI + G1 모델별 방향."
   }
  },
  "contamination_incident": {
