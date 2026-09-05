@@ -84,6 +84,39 @@ _WORD_BOUNDARY_CACHE: dict[int, re.Pattern] = {}
 # 시대 강건 신호 — 통사 프레임으로 잡는다(표면 어휘 목록은 장르를 타서 실패한다).
 _EN1_RE = re.compile(r",\s+\w+ing\b", re.I)
 _EN2_RE = re.compile(r"\b(?:is|are|was|were)\b", re.I)
+# 3항 등위(blader #10 forced groups of three) — `A, B, and C` 프레임.
+# R2 블로그 실측에서 이 장르 최강 신호였다: AUC 0.681, 인간 중앙값이 세 출처
+# 모두 0.00, 3모델 0.655~0.704. 승격 기준(0.20)에는 0.019 미달이라 **규칙으로는
+# 승격하지 않았지만**, 라우터 신호로는 쓴다 — 라우터는 규칙이 아니라 경로 배정이다.
+_TRICOLON_RE = re.compile(
+    r"\b[\w-]+(?:\s+[\w-]+){0,2},\s+[\w-]+(?:\s+[\w-]+){0,2},\s+and\s+[\w-]+", re.I
+)
+
+# ── 장르별 임계 (R2 실측 2026-09-04) ────────────────────────────────────
+#
+# **임계는 장르에 종속된다.** 초록 보정 임계(쉼표 절 < 10.82)를 블로그에 그대로
+# 쓰면 인간 중앙값 9.68 이 통째로 AI 쪽에 떨어져 라우터가 죽는다 — 분리도 0.29,
+# 인간 에세이의 21% 를 heavy 로 오탐했다. 블로그 셀 보정값으로 바꾸면 0.65 다
+# (모델별 0.58~0.78 · 인간 출처 홀드아웃 0.53~0.74 · 독립 코퍼스 0.65).
+#
+# 분리도 정의: AI heavy율 − 인간 heavy율 + 인간 light율 − AI light율.
+THRESHOLD_SETS = {
+    "abstract": {
+        "separation": 0.95,
+        "source": "arXiv cs.CL 인간 42 vs AI 21",
+    },
+    "blog": {
+        "comma_segment_max": 8.57,   # 인간 하위 25% (블로그 100편)
+        "tricolon_min": 0.0,         # 1건이라도 있으면 AI 방향
+        "en1_min": 0.0,
+        "separation": 0.65,
+        "source": "LessWrong·Paul Graham·SSC 인간 100 vs AI 102",
+    },
+}
+# shim 의 --genre 값을 임계 셀로 푼다. 측정된 셀은 둘뿐이라 나머지는 blog 로
+# 보낸다(shim 기본값이 essay 이고, 산문 장르가 초록보다 블로그에 가깝다).
+GENRE_TO_SET = {"abstract": "abstract"}
+DEFAULT_SET = "blog"
 
 
 def _per_1k(text: str, rx: re.Pattern, tokens: int) -> float:
@@ -136,8 +169,13 @@ def lexicon_hits(
     return total, per
 
 
-def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
-    """영어 정량 점수 + route_hint. shim 의 유일한 진입점."""
+def compute_all_en(
+    text: str, lexicon_path: str | None = None, genre: str = "essay"
+) -> dict:
+    """영어 정량 점수 + route_hint. shim 의 유일한 진입점.
+
+    ``genre`` 는 임계 셀을 고른다(THRESHOLD_SETS). 측정된 셀은 abstract·blog 뿐이다.
+    """
     universal = compute_universal(
         text, long_threshold=LONG_SENTENCE_TOKENS, unit="tokens"
     )
@@ -149,6 +187,8 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
     chars = len(text)
     dispersion = universal["sentence_length_dispersion"]
 
+    threshold_set = GENRE_TO_SET.get(genre, DEFAULT_SET)
+
     if chars > ROUTE_HEAVY_MIN_CHARS:
         hint = "heavy"
         reason = f"{chars:,} chars (>{ROUTE_HEAVY_MIN_CHARS:,}) — 초장문"
@@ -158,6 +198,36 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
             f"{tokens} tokens (<{MIN_TOKENS_FOR_RATE}) — 밀도 판정 불가, "
             f"기본 경로 (렉시콘 {total}건 · 분산 {dispersion})"
         )
+    elif threshold_set == "blog":
+        # 블로그 셀 보정 3신호. 쉼표 계열 나머지·EN-2·분산은 이 장르에서
+        # **모델마다 부호가 반대**라(G1 미통과) 라우터에 넣지 않는다.
+        cfg = THRESHOLD_SETS["blog"]
+        seg = universal["comma_segment_length"]
+        en1 = _per_1k(text, _EN1_RE, tokens)
+        tri = _per_1k(text, _TRICOLON_RE, tokens)
+        signals = []
+        if seg and seg < cfg["comma_segment_max"]:
+            signals.append(f"쉼표 절 {seg}어(<{cfg['comma_segment_max']})")
+        if tri > cfg["tricolon_min"]:
+            signals.append(f"3항 등위 {tri}/1k")
+        if en1 > cfg["en1_min"]:
+            signals.append(f"분사절 {en1}/1k")
+        # 렉시콘은 이 장르에서 거의 발화하지 않는다(R2 실측: 인간 0건율 100% ·
+        # AI 99% · AUC 0.505 — Kobak 목록이 생의학 초록 어휘라서다). 그래도
+        # 남긴다: 독립 근거선(E2)이고, 실제로 뜨면 그건 의미 있는 신호다.
+        # 분리도 영향은 0.65 → 0.66 으로 잡음 수준이다.
+        if per_1k >= HEAVY_MIN_LEXICON_PER_1K:
+            signals.append(f"렉시콘 {per_1k}/1k")
+        if len(signals) >= 2:
+            hint, reason = "heavy", "AI 신호 " + " + ".join(signals)
+        elif signals:
+            hint, reason = "standard", "AI 신호 " + " · ".join(signals)
+        else:
+            hint = "light"
+            reason = (
+                f"쉼표 절 {seg}어 · 3항 등위 {tri}/1k · 분사절 {en1}/1k — "
+                f"인간 범위(블로그 셀 보정)"
+            )
     else:
         seg = universal["comma_segment_length"]
         incl = universal["comma_inclusion_rate"]
@@ -204,11 +274,14 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
             "by_family": per,
             "all_entries_total": all_total,
         },
+        "genre": genre,
+        "threshold_set": threshold_set,
         "route_hint": hint,
         "route_reason": reason,
         "route_signals": {
             "en1_participial_per_1k": _per_1k(text, _EN1_RE, tokens),
             "en2_be_verb_per_1k": _per_1k(text, _EN2_RE, tokens),
+            "tricolon_per_1k": _per_1k(text, _TRICOLON_RE, tokens),
             "lexicon_total": total,
             "lexicon_per_1k": per_1k,
             "dispersion": dispersion,
@@ -220,7 +293,7 @@ def compute_all_en(text: str, lexicon_path: str | None = None) -> dict:
             "렉시콘 E2(Kobak, 생의학 초록 — 장르 불일치 캐비엇). 라우터에는 "
             "논문이 명시 호명한 12건만 쓴다(목록 전체는 증가분 집합이라 "
             "초고빈도어 포함 — lexicon.json router_policy). 임계 E3(자체 "
-            "스파이크 1회). E1 없음 — heavy 는 길이 기준에서만 신뢰하고 "
-            "finalize 경로는 열지 않는다."
+            "스파이크 1회). 임계 셀 E1 — abstract(분리도 0.95) · blog(0.65). "
+            "heavy 는 길이 기준에서만 신뢰하고 finalize 경로는 열지 않는다."
         ),
     }

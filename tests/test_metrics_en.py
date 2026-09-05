@@ -177,3 +177,39 @@ class DenominatorGuardTests(unittest.TestCase):
     def test_long_human_prose_is_not_heavy(self) -> None:
         out = self.m.compute_all_en(HUMAN * 8)
         self.assertNotEqual(out["route_hint"], "heavy", out["route_reason"])
+
+
+class GenreThresholdTests(unittest.TestCase):
+    """장르별 임계 (R2 실측 2026-09-04).
+
+    초록 보정 임계를 블로그에 그대로 쓰면 인간 중앙값이 통째로 AI 쪽에 떨어져
+    라우터가 죽는다(분리도 0.29 → 블로그 보정 0.65).
+    """
+
+    def setUp(self) -> None:
+        self.m = _load()
+
+    def test_genre_selects_threshold_set(self) -> None:
+        self.assertEqual(self.m.GENRE_TO_SET.get("abstract"), "abstract")
+        self.assertEqual(self.m.DEFAULT_SET, "blog")
+        for genre, want in (("abstract", "abstract"), ("essay", "blog"),
+                            ("blog", "blog"), ("column", "blog")):
+            out = self.m.compute_all_en("word " * 200, genre=genre)
+            self.assertEqual(out["threshold_set"], want, genre)
+
+    def test_blog_set_uses_tricolon_not_comma_usage(self) -> None:
+        """쉼표 사용률·EN-2 는 이 장르에서 모델 개인어라 라우터에 없다."""
+        text = ("We shipped fast, learned, and adjusted. " * 24) + ("A short line here. " * 24)
+        out = self.m.compute_all_en(text, genre="blog")
+        self.assertIn("3항 등위", out["route_reason"])
+        self.assertNotIn("be동사", out["route_reason"])
+
+    def test_tricolon_frame_not_two_item_list(self) -> None:
+        rx = self.m._TRICOLON_RE
+        self.assertTrue(rx.search("careers, products, and strategy"))
+        self.assertFalse(rx.search("careers and products"))
+
+    def test_threshold_sets_are_documented_with_separation(self) -> None:
+        for name, cfg in self.m.THRESHOLD_SETS.items():
+            self.assertIn("separation", cfg, name)
+            self.assertIn("source", cfg, name)

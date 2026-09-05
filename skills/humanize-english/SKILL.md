@@ -1,42 +1,48 @@
 ---
 name: humanize-english
-version: "0.1.0"
+version: "0.2.0"
 description: AI(ChatGPT·Claude·Gemini 등)가 쓴 영어 텍스트를 사람이 쓴 글처럼 윤문하는 스킬. antithesis 대구("not X but Y")·범용 동사 수렴(delve·underscore·showcase)·문장 길이 분산 부족·명사화 과다·hedging·수동태 남용과 구조 티(불릿·이모지·콜론 헤딩·First/Second/Third)를 탐지·재작성한다. 내용은 한 글자도 바꾸지 않고 문체·리듬·표현만 손댄다. 트리거 — "humanize this English", "make this sound human", "remove AI tells", "this reads like ChatGPT", "de-slop", "영어 AI 티 제거", "영어 글 자연스럽게", "영문 윤문". 한국어 텍스트는 humanize-korean 스킬을 쓴다. 단순 문법·오탈자 교정(grammar check)이나 번역은 이 스킬이 아니다.
 ---
 
-# Humanize English — AI 영어 티 제거 (v0.1)
+# Humanize English — AI 영어 티 제거 (v0.2)
 
-> ⚠️ **장르 한계.** 임계는 **학술 초록에서만 검증**됐다. 블로그 셀은 두 번
-> 실패했다 — HN 댓글(1회차)과 다듬어진 장문 에세이(2회차) 양쪽에서 모든 지표가
-> |0.5차| < 0.20 이다. 2회차는 라우터를 직접 재봤다: 초록 셀 분리도 0.95 에 비해
-> 에세이는 **0.31**, 맨 프롬프트 AI 에서는 **−0.28** 로 부호가 뒤집힌다(라우터가
-> AI 를 인간보다 더 사람스럽다고 판정). 인간 에세이의 26% 를 heavy 로 오탐한다.
+> ⚠️ **임계는 장르에 종속된다 (v0.2 에서 측정·배선).** 초록 보정 임계를 블로그에
+> 그대로 쓰면 인간 중앙값이 통째로 AI 쪽에 떨어져 라우터가 죽는다 — 분리도 0.29,
+> 인간 에세이의 21% 를 heavy 로 오탐했다. 그래서 shim 에 `--genre` 를 넘겨
+> **임계 셀을 고른다**(`abstract` · `blog`).
 >
-> **따라서 초록류가 아닌 입력에서는:** ① `route_hint` 를 근거로 들지 않는다,
-> ② `light` 가 나와도 **standard 로 올린다**(light 는 "고칠 게 없다"는 판정인데
-> 이 장르에서 그 판정의 근거가 없다), ③ 그 사실을 사용자에게 한 줄로 알린다.
+> | 셀 | 코퍼스 | 분리도 |
+> |---|---|---|
+> | abstract | arXiv 인간 42 vs AI 21 | **0.95** |
+> | blog (기본) | LW·PG·SSC 인간 100 vs AI 102 | **0.65** |
+> | blog / GPT 산문 | 같은 인간 vs codex CLI 14 | **1.33** |
 >
-> **근거 상태를 먼저 밝힌다.** 이 스킬의 규칙에는 **E1(자체 대조 코퍼스 실측)이 하나도 없다.**
-> 한국어 실측의 이식분과 외부 발표(E2)·자체 스파이크(E3)뿐이다. 그래서
-> **light/standard 2경로만 열고 heavy·finalize 는 닫는다** — 증적을 주장할 근거가
-> 없는 것을 증적처럼 내놓지 않는다. 등급 정의: `${SKILL_ROOT}/core/principles.md`.
+> 두 셀 밖(마케팅 카피·기술 문서·소설)은 **미검증이다.** 그 경우 `route_hint` 를
+> 근거로 들지 말고 사용자에게 한 줄로 알린다.
+>
+> **근거 상태를 먼저 밝힌다.** v0.2 기준 **임계는 E1**(자체 대조 코퍼스 실측 —
+> abstract·blog 두 셀)이고, **규칙 자체는 여전히 E2·E3** 다(외부 발표 + 자체
+> 스파이크). 그래서 **light/standard 2경로만 열고 heavy·finalize 는 닫는다** —
+> 영어에는 finalize 에이전트도, 검증 증적을 주장할 근거도 아직 없다.
+> 등급 정의: `${SKILL_ROOT}/core/principles.md`.
 
 ## Phase 0: 상태 줄 + 경로 결정
 
 Phase 1(shim) 직후 다음 한 줄을 출력한다.
 
 ```
-humanize-english v0.1 — path: {light|standard} ({route_hint|user}) / run_id: {YYYY-MM-DD-NNN}
+humanize-english v0.2 — path: {light|standard} ({route_hint|user}) / genre: {threshold_set} / run_id: {YYYY-MM-DD-NNN}
 ```
 
 ### 경로 결정
 1. **사용자 명시가 최우선.** "가볍게"·"light"·"minimal" → light 고정.
-1-b. 입력이 학술 초록류가 **아니면**(블로그·칼럼·에세이·댓글) `light` 를 채택하지
-   않는다 — standard 로 올리고 위 「장르 한계」의 고지를 붙인다. 사용자가 명시적으로
-   light 를 요구한 경우는 예외다.
+1-b. **장르를 판정해 shim 에 넘긴다.** 학술 초록류면 `--genre abstract`,
+   블로그·칼럼·에세이면 `--genre blog`(기본값). 두 셀 밖이면 `blog` 로 두되
+   위 표의 미검증 고지를 붙인다. 넘긴 값은 `00_metrics.json` 의
+   `threshold_set` 으로 되돌아오므로 상태 줄에 함께 적는다.
 2. 명시가 없으면 `00_metrics.json` 의 `route_hint` 를 따른다.
-3. **`route_hint` 가 `heavy` 여도 standard 로 처리한다.** 영어에는 heavy 를 정당화할
-   E1 근거가 없다. 대신 사용자에게 한 줄 고지한다:
+3. **`route_hint` 가 `heavy` 여도 standard 로 처리한다.** 영어에는 heavy 경로가
+   요구하는 finalize 에이전트가 없다. 대신 사용자에게 한 줄 고지한다:
    "This text scored heavy ({route_reason}). English support caps at standard —
    the deep-verification path needs measured evidence we don't have for English yet."
 4. `route_hint` 부재·shim 실패 → standard.
@@ -71,10 +77,13 @@ SKILL_ROOT="$(d="$(cd -P "${CLAUDE_SKILL_DIR}" && pwd)"; \
      you'd like…", "I hope this helps!")를 벗겨낸다. 본문이 아니므로 의미 손실 0.
 3. shim 1회 실행:
    ```
-   python3 ${SKILL_ROOT}/scripts/prepare_monolith_input.py --run-dir _workspace/{run_id} --lang en
+   python3 ${SKILL_ROOT}/scripts/prepare_monolith_input.py --run-dir _workspace/{run_id} --lang en \
+     --genre {abstract|blog}
    ```
-   - 산출: `00_metrics.json`(`route_hint`·`route_reason`·`route_signals`) +
-     `01_input_with_metrics.txt`
+   - 산출: `00_metrics.json`(`route_hint`·`route_reason`·`route_signals`·
+     `threshold_set`) + `01_input_with_metrics.txt`
+   - 결합 파일의 지표·규칙 ID 는 **영어 것만** 실린다(v0.2 에서 수정 — 그 전에는
+     한국어 v1.6 블록과 존재하지 않는 규칙 ID 가 실렸다).
    - graceful degrade 내장 — 실패 시 점수 블록 없이 진행하고 `00_metrics.error` 를 남긴다.
 4. `route_hint` 를 읽어 경로를 확정하고 상태 줄을 출력한다.
 

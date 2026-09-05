@@ -371,7 +371,71 @@ def _render_v2_counts(metrics_obj: dict) -> list[str]:
     return lines
 
 
+def _render_block_en(metrics_obj: dict) -> str:
+    """영어 계측 블록.
+
+    **한국어 블록을 영어 런에 그대로 내보내던 결함을 고친 것이다.** 실측
+    (2026-09-05 첫 end-to-end 런): 영어 결합 파일에 `[v1.6 지표]` 8개가 전부
+    n/a 로 실리고, 근거 가이드가 **영어 룰북에 없는 규칙 ID**(C-11·D-1·H-1)를
+    적용하라고 지시했다. 윤문 콜이 룰북과 모순되는 지시를 받는 상태였다.
+    """
+    u = metrics_obj.get("universal", {})
+    sig = metrics_obj.get("route_signals", {})
+    lex = metrics_obj.get("lexicon", {})
+
+    lines: list[str] = []
+    lines.append("[정량 사전 점수 — 영어 계측형 (lang/en/metrics_en.py)]")
+    if metrics_obj.get("route_hint"):
+        lines.append(
+            f"route_hint: {metrics_obj['route_hint']}  "
+            f"(권고 — 사용자·오케스트레이터가 무시 가능)"
+        )
+        lines.append(f"route_reason: {metrics_obj.get('route_reason', '')}")
+    lines.append(f"genre: {metrics_obj.get('genre', 'essay')}")
+    lines.append(f"threshold_set: {metrics_obj.get('threshold_set', 'abstract')}")
+    lines.append(f"char_count: {metrics_obj.get('char_count', 0)}")
+    lines.append("")
+    lines.append("[계측 지표]")
+    for key, fmt in (
+        ("sentences", "{:d}"),
+        ("tokens", "{:d}"),
+        ("sentence_length_dispersion", "{:.2f}"),
+        ("long_sentence_rate", "{:.2f}"),
+        ("comma_inclusion_rate", "{:.2f}"),
+        ("comma_usage_rate", "{:.2f}"),
+        ("comma_segment_length", "{:.2f}"),
+    ):
+        val = u.get(key)
+        lines.append(f"- {key}: {fmt.format(val) if val is not None else 'n/a'}")
+    lines.append(f"- EN-1 participial /1k: {sig.get('en1_participial_per_1k', 'n/a')}")
+    lines.append(f"- EN-2 be-verb /1k: {sig.get('en2_be_verb_per_1k', 'n/a')}")
+    if "tricolon_per_1k" in sig:
+        lines.append(f"- tricolon /1k: {sig['tricolon_per_1k']}")
+    lines.append(f"- lexicon(router 12건) /1k: {lex.get('per_1k', 'n/a')}")
+    lines.append("")
+    lines.append("[근거 사용 가이드]")
+    lines.append("- 위 점수는 *근거 보조*다. 단독 판정 금지.")
+    lines.append(
+        "- 규칙 ID 는 lang/en/quick-rules.md 의 것만 쓴다(EN-1·EN-2·C-8·F-7·E-5 …). "
+        "한국어 ID(C-11·D-1·H-1 …)는 이 경로에 존재하지 않는다."
+    )
+    lines.append(
+        "- **hedge·수동태·contraction·1·2인칭은 건드리지 않는다** — LLM 이 이미 "
+        "과소 사용한다(scholarship.md 결핍 신호). 제거하면 더 AI처럼 된다."
+    )
+    lines.append(
+        f"- 임계는 '{metrics_obj.get('threshold_set', 'abstract')}' 셀 보정값이다. "
+        "장르가 다르면 route_hint 를 근거로 들지 말 것(baseline.json genres)."
+    )
+    if metrics_obj.get("evidence_note"):
+        lines.append(f"- 근거 등급: {metrics_obj['evidence_note']}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def _render_block(metrics_obj: dict) -> str:
+    if metrics_obj.get("lang") == "en":
+        return _render_block_en(metrics_obj)
     m = metrics_obj.get("metrics", {})
     z = metrics_obj.get("z_scores", {})
     ev = metrics_obj.get("evidence", {})
@@ -946,7 +1010,7 @@ def main(argv: list[str] | None = None) -> int:
             sys.path.insert(0, str(PROJECT_ROOT / "lang" / "en"))
             from metrics_en import compute_all_en  # noqa: PLC0415
 
-            metrics_obj = compute_all_en(text)
+            metrics_obj = compute_all_en(text, genre=args.genre)
             metrics_path.write_text(
                 json.dumps(metrics_obj, ensure_ascii=False, indent=2),
                 encoding="utf-8",

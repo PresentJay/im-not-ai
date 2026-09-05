@@ -444,7 +444,7 @@
   },
   "blog_essay_r2": {
    "status": "판별 가능",
-   "captured_at": "2026-09-05T01:47:25+00:00",
+   "captured_at": "2026-09-05T02:48:14+00:00",
    "human_n": 100,
    "ai_n": 102,
    "source_human": {
@@ -715,19 +715,54 @@
    "promoted": [
     "comma_segment_length"
    ],
+   "cross_family_gpt": {
+    "n": 14,
+    "generator": "codex-cli (OpenAI GPT)",
+    "auc": {
+     "sentence_length_dispersion": 0.055,
+     "comma_inclusion_rate": 0.241,
+     "comma_usage_rate": 0.358,
+     "comma_segment_length": 0.04,
+     "en1_participial": 0.638,
+     "en2_be_verbs": 0.496,
+     "fragment_rate": 0.612,
+     "rhetorical_question": 0.557,
+     "second_person": 0.219,
+     "filler_phrase": 0.49,
+     "vague_source": 0.48,
+     "range_formula": 0.511,
+     "tricolon": 0.86,
+     "deeper_truth": 0.5,
+     "hype_word": 0.586,
+     "closing_formula": 0.495
+    },
+    "router": {
+     "human": {
+      "light": 0.56,
+      "standard": 0.28,
+      "heavy": 0.16
+     },
+     "gpt": {
+      "light": 0.0,
+      "standard": 0.07,
+      "heavy": 0.93
+     },
+     "separation": 1.33
+    }
+   },
    "router_current": {
     "note": "현행 라우터(초록 보정 임계)를 블로그 입력에 그대로 쓴 결과",
     "human": {
-     "light": 0.21,
-     "standard": 0.58,
-     "heavy": 0.21
+     "light": 0.56,
+     "standard": 0.28,
+     "heavy": 0.16
     },
     "ai": {
-     "light": 0.04,
-     "standard": 0.63,
-     "heavy": 0.33
+     "light": 0.22,
+     "standard": 0.31,
+     "heavy": 0.47
     },
-    "separation": 0.29
+    "separation": 0.65
    },
    "router_blog_calibrated": {
     "signals": [

@@ -27,7 +27,8 @@ Claude Code 세션에서:
 - 설치 후 새 세션에서 `/humanize-korean`(또는 `/humanize`, `/humanize-redo`), 혹은 자연어 트리거("이 글 AI 티 없애줘")로 발동.
 - 업데이트: `/plugin marketplace update im-not-ai` 후 `/plugin update humanize-korean`.
 - 제거: `/plugin uninstall humanize-korean`.
-- 구성요소: 스킬 3개(humanize-korean·humanize·humanize-redo) + 서브에이전트 9개가 함께 설치됩니다.
+- 구성요소: 스킬 4개(humanize-korean·**humanize-english**·humanize·humanize-redo) + 서브에이전트 9개가 함께 설치됩니다.
+- 영어 글은 `/humanize-english` 또는 "humanize this English" 로 발동합니다(v0.2 — 검증 장르는 학술 초록·블로그 에세이).
 
 ### 방법 ② 클론 + 스크립트
 

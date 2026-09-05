@@ -51,7 +51,12 @@ _ROOT = os.path.abspath(os.path.join(_HERE, ".."))
 sys.path.insert(0, os.path.join(_ROOT, "core"))
 sys.path.insert(0, os.path.join(_ROOT, "lang", "en"))
 from metrics_universal import compute_universal  # noqa: E402
-from metrics_en import LONG_SENTENCE_TOKENS, _EN1_RE, _EN2_RE  # noqa: E402
+from metrics_en import (  # noqa: E402
+    LONG_SENTENCE_TOKENS,
+    _EN1_RE,
+    _EN2_RE,
+    _TRICOLON_RE,
+)
 
 
 def _sibling(name: str):
@@ -333,9 +338,9 @@ _CAND = {
     # #12 false ranges — "from X to Y" 열거 공식.
     "range_formula": re.compile(r"\bfrom\s+[\w-]+(?:\s+[\w-]+){0,2}\s+to\s+[\w-]+", re.I),
     # #10 tricolon — 3항 등위. 쉼표 2개 + and 프레임.
-    "tricolon": re.compile(
-        r"\b[\w-]+(?:\s+[\w-]+){0,2},\s+[\w-]+(?:\s+[\w-]+){0,2},\s+and\s+[\w-]+", re.I
-    ),
+    # **런타임(metrics_en)과 같은 객체를 쓴다.** 연구 스크립트와 라우터가 서로
+    # 다른 정규식을 갖게 되면 실측치와 제품 동작이 조용히 갈린다.
+    "tricolon": _TRICOLON_RE,
     # #27 deeper truth — "진짜는 이거다" 제스처.
     "deeper_truth": re.compile(
         r"\bhere'?s the (?:thing|catch|problem)\b"
@@ -410,6 +415,45 @@ def _route_dist(rows: list[dict], seg_max: float) -> dict:
 
 def _separation(human: dict, ai: dict) -> float:
     return round(ai["heavy"] - human["heavy"] + human["light"] - ai["light"], 2)
+
+
+# ── GPT 팔 — 모델 계열 교차 검증 ────────────────────────────────────────
+#
+# R2 까지의 AI 팔은 **Claude 3모델뿐**이었다. 사용자가 붙여넣는 글의 상당수는
+# GPT 인데, 우리 신호가 Claude 개인어인지 모델 무관한 AI 티인지 구분이 안 됐다.
+# G1(전 모델 생존)의 원래 취지는 **계열을 건너뛰는 것**이다.
+_CODEX_BIN = "codex"
+
+
+def _one_gpt(workdir: str, title: str) -> dict | None:
+    prompt = _gpt_prompt(title)
+    for _ in range(_base._GEN_MAX_TRIES):
+        proc = subprocess.run(
+            [_CODEX_BIN, "exec", "--skip-git-repo-check", prompt],
+            capture_output=True, text=True, timeout=900,
+            cwd=workdir, env=_base._clean_env(), stdin=subprocess.DEVNULL,
+        )
+        text = _base.extract_sentinel(proc.stdout)
+        if text and len(text.split()) >= _MIN_SOURCE_WORDS and not _base.is_contaminated(text):
+            return {"title": title, "text": _excerpt(text), "tail": _tail(text),
+                    "model": "gpt(codex-cli)"}
+    print(f"포기: gpt / {title[:40]}", file=sys.stderr)
+    return None
+
+
+def _gpt_prompt(title: str) -> str:
+    return (
+        f'Write an engaging blog post titled "{title}" for our website. '
+        f"Around {_GEN_WORDS} words. "
+        f"Output the post between {_base._START} and {_base._END} and nothing else."
+    )
+
+
+def gen_gpt(titles: list[str]) -> list[dict]:
+    workdir = tempfile.mkdtemp(prefix="humanize_gpt_")
+    with ThreadPoolExecutor(max_workers=_GEN_WORKERS) as pool:
+        rows = pool.map(lambda t: _one_gpt(workdir, t), titles)
+    return [r for r in rows if r]
 
 
 def _blog_router(human: list[dict], ai: list[dict]) -> dict:
@@ -495,6 +539,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="블로그 셀 R2")
     ap.add_argument("--fetch-human", type=int, metavar="N")
     ap.add_argument("--gen-ai", type=int, metavar="N", help="제목 N개 × 3모델")
+    ap.add_argument("--gen-gpt", type=int, metavar="N",
+                    help="GPT 팔 — 제목 N개 × codex CLI (모델 계열 교차 검증)")
     ap.add_argument("--report", action="store_true")
     args = ap.parse_args(argv)
 
@@ -522,6 +568,16 @@ def main(argv: list[str] | None = None) -> int:
         titles = titles[: args.gen_ai]
         _save("ai.json", gen_ai(titles))
         print(f"AI {len(_load('ai.json'))}편")
+    if args.gen_gpt:
+        human = _load("human.json")
+        if not human:
+            raise SystemExit("먼저 --fetch-human 을 실행할 것")
+        ai = _load("ai.json")
+        titles = list(dict.fromkeys(r["title"] for r in ai))[: args.gen_gpt] or [
+            r["title"] for r in human[: args.gen_gpt]
+        ]
+        _save("ai_gpt.json", gen_gpt(titles))
+        print(f"GPT {len(_load('ai_gpt.json'))}편")
     if args.report:
         human, ai = _load("human.json"), _load("ai.json")
         if not human or not ai:
@@ -558,6 +614,21 @@ def main(argv: list[str] | None = None) -> int:
                 "ai_median": round(statistics.median(av[k]), 2),
             }
         promoted = [k for k, v in rows.items() if v["verdict"] == "승격 후보"]
+
+        # 모델 계열 교차 — Claude 3모델만으로는 "AI 티"인지 "Claude 개인어"인지
+        # 가릴 수 없다. G1 의 원래 취지가 계열을 건너뛰는 것이다.
+        gpt = _load("ai_gpt.json")
+        cross_family = None
+        if gpt:
+            g_dist = _route_dist(gpt, _blog_router(human, ai)["seg_max"])
+            h_dist = _route_dist(human, _blog_router(human, ai)["seg_max"])
+            cross_family = {
+                "n": len(gpt),
+                "generator": "codex-cli (OpenAI GPT)",
+                "auc": {k: auc(_values(gpt, k), hv[k]) for k in keys},
+                "router": {"human": h_dist, "gpt": g_dist,
+                           "separation": _separation(h_dist, g_dist)},
+            }
         from collections import Counter
 
         cell = {
@@ -570,6 +641,7 @@ def main(argv: list[str] | None = None) -> int:
             "ai_prompt": "실사용자 프롬프트 — engaging blog post, 700단어, 형식 무지정",
             "metrics": rows,
             "promoted": promoted,
+            "cross_family_gpt": cross_family,
             "router_current": {
                 "note": "현행 라우터(초록 보정 임계)를 블로그 입력에 그대로 쓴 결과",
                 "human": _r1._route_dist(human),

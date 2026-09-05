@@ -1,4 +1,4 @@
-# Humanize KR — AI 한글 티 제거 하네스 (v2.3.2)
+# Humanize KR — AI 한글 티 제거 하네스 (v2.4.0)
 
 ## 프로젝트 개요
 
@@ -83,7 +83,7 @@ im-not-ai/
 │   ├── humanize-finalizer.md      # heavy P3 마무리 (의미 15항 + 자연성)
 │   ├── korean-ai-tell-taxonomist.md  # 유지보수 (SSOT 갱신)
 │   └── … 개발용 지원 5종 (scholar·distiller·gap-analyzer·metric-engineer·integrator)
-├── skills/                # 스킬 3종 (humanize-korean 오케스트레이터 + humanize·humanize-redo 진입)
+├── skills/                # 스킬 4종 (humanize-korean · humanize-english · humanize · humanize-redo)
 │   └── humanize-korean/
 │       ├── SKILL.md               # 오케스트레이터 (route_hint 3경로 분기·shim 배선, quick_rules_path: ${CLAUDE_SKILL_DIR}/...)
 │       └── references/
@@ -214,6 +214,7 @@ im-not-ai/
 - **언어 무관 원리·증거 기준: `core/principles.md`** — 규칙을 신설·강등할 때의 판정 기준(G1~G3) + 윤문 결과 판정(G4)
 - 다국어 확장 설계: `docs/superpowers/specs/2026-09-02-multilingual-design.md` (근거: `docs/spikes/2026-09-02-en-transplant.md`)
 - 오케스트레이터: `skills/humanize-korean/SKILL.md`
+- 영어 스킬: `skills/humanize-english/SKILL.md` (v0.2 — 장르 보정 라우터 · 게이트 5종)
 - 분류 체계: `skills/humanize-korean/references/ai-tell-taxonomy.md`
 - 윤문 처방: `skills/humanize-korean/references/rewriting-playbook.md`
 - 슬림 룰북(monolith): `skills/humanize-korean/references/quick-rules.md`
