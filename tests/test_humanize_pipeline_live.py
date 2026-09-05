@@ -54,5 +54,61 @@ class PipelineLiveTests(unittest.TestCase):
         self.assertNotEqual(gate.returncode, 3, f"게이트 실행 오류: {gate.stderr}")
 
 
+class EnglishPipelineLiveTests(unittest.TestCase):
+    """영어 스킬을 실제로 호출한다.
+
+    v2.4 까지 영어는 **스킬을 통한 end-to-end 실행이 한 번도 검증되지 않았다** —
+    스크립트를 직접 돌린 것뿐이었다. 스킬이 shim 을 부르고 게이트 5종을 돌려
+    final.md 를 남기는지, 그 산출물이 게이트를 통과하는지 여기서 본다.
+    """
+
+    SAMPLE = (
+        "The old argument for shipping fast was about learning. You put something "
+        "in front of users, you watch what breaks, and you adjust. That logic still "
+        "holds, but it has been stretched to cover decisions it was never meant to "
+        "cover. Teams now ship half-formed features, half-staffed migrations, and "
+        "half-tested integrations, calling each one an experiment. An experiment "
+        "has a hypothesis and a stopping rule. Most of what gets shipped under that "
+        "banner has neither. It may be worth asking what we are actually buying "
+        "with the speed, because the cost shows up later and lands on someone else."
+    )
+
+    def test_english_skill_runs_end_to_end(self) -> None:
+        try:
+            out, run_dir = hr.run_humanize_pipeline(self.SAMPLE, skill="humanize-english")
+        except hr.QuotaExhausted as exc:
+            self.skipTest(f"사용량 한도 — 측정 불가: {exc}")
+
+        self.assertTrue(out.strip(), "final.md 가 비어 있다")
+        # shim 이 실제로 돌았는지 — 점수 파일이 남아야 한다.
+        self.assertTrue(
+            os.path.isfile(os.path.join(run_dir, "00_metrics.json")),
+            f"shim 산출물이 없다: {run_dir}",
+        )
+        with open(os.path.join(run_dir, "00_metrics.json"), encoding="utf-8") as f:
+            metrics = json.load(f)
+        self.assertEqual(metrics["lang"], "en")
+        self.assertIn(metrics["route_hint"], ("light", "standard", "heavy"))
+        self.assertIn(metrics["threshold_set"], ("abstract", "blog"))
+
+        # 게이트 3종을 우리가 직접 다시 돌려 산출물을 판정한다.
+        before = os.path.join(run_dir, "01_input.txt")
+        after = os.path.join(run_dir, "final.md")
+        for name, args in (
+            ("verify_change_rate.py", []),
+            ("../core/content_preservation.py", []),
+            ("../core/modality_loss.py", []),
+        ):
+            path = os.path.normpath(os.path.join(_ROOT, "scripts", name))
+            gate = subprocess.run(
+                [sys.executable, path, "--before", before, "--after", after] + args,
+                capture_output=True, text=True, timeout=120,
+            )
+            self.assertEqual(
+                gate.returncode, 0,
+                f"[{os.path.basename(name)}] 게이트 실패\n{gate.stdout}{gate.stderr}",
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

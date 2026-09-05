@@ -92,7 +92,9 @@ def _prompt(text: str, strict: bool) -> str:
 _PATH_TAG = re.compile(r"<<<P>>>\s*(\S+?)\s*<<</P>>>")
 
 
-def run_humanize_pipeline(text: str, *, timeout: int = 1200) -> tuple[str, str]:
+def run_humanize_pipeline(
+    text: str, *, skill: str = "humanize-korean", timeout: int = 1200
+) -> tuple[str, str]:
     """**제품이 실제로 도는 경로**로 스킬을 실행한다 — 파일 생성 허용.
 
     `run_humanize` 는 "파일은 만들지 마"라고 지시해서 shim·게이트가 통째로 빠진
@@ -111,7 +113,7 @@ def run_humanize_pipeline(text: str, *, timeout: int = 1200) -> tuple[str, str]:
     with open(os.path.join(workdir, "input.txt"), "w", encoding="utf-8") as f:
         f.write(text)
     prompt = (
-        f"humanize-korean 스킬로 {workdir}/input.txt 의 내용을 윤문해줘. "
+        f"{skill} 스킬로 {workdir}/input.txt 의 내용을 윤문해줘. "
         f"스킬을 정상 절차대로(shim·게이트 포함) 실행해서 {workdir} 아래에 "
         f"_workspace/{{run_id}}/ 산출물을 남겨. 마지막에 final.md 의 절대경로만 "
         f"<<<P>>> 와 <<</P>>> 사이에 출력해."
